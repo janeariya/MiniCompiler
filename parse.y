@@ -9,58 +9,59 @@ typedef struct node{
 	struct node * next;	
 } node;
 
-typedef struct sym{
-	char *name;
-	struct sym *next;
-} sym;
-
 node *getNewNode(int val,node *next);
 void push(int val);
 int pop(void);
 
 int acc = 0;
 int size = 0;
-int reg[] = {0,0,0,0,0,0,0,0,0,0};
+int arr[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 node * topNode = NULL;
 
 %}
 %union{
 	int dval;
-	char *id;
 }
 %token <dval> NUM
-%token <id> ID
-%token Show IF LOOP
-%token INT CHAR STRING BOOL
-%left '+' '-'
-%left '*' '/' '\\'
+%token <dval> ID
+%token SHOW INT IF LOOP STRING ASSIGN TO ERROR
+%right '>' '<'
+%left '+' '-' 
+%left '*' '/' '%' EQUAL
 %right '^'
-%left ')' '('
-%token COMMENT
+%left '(' ')'
+%left '{' '}'
 %type <dval> exp
 %start result
 %%
 result :
-	result sta '\n' { printf("> "); }	
+	result stas '\n' { printf("> "); }	
 	|
 	;
+stas :
+	| stas sta ';'
 sta :
 	exp				{ printf("= %d\n", $1); }
 	| SHOW exp 		{ printf("= %d\n",$2); }
+	| IF exp '{' stas '}'	{}
+	| LOOP exp '{' stas '}'	{}
+	| LOOP ID ':' INT TO INT '{' stas '}' {}
+	| ID ASSIGN exp	{ arr[$1] = $3; printf("%d\n",arr[$1]);}
+	| ERROR {printf("Error!!");}
 	;
 exp: NUM
-	| exp '-' exp	{ $$ = $1 - $3; acc = $$;}
-	| exp '+' exp 	{ $$ = $1 + $3; acc = $$;}
-	| exp '*' exp 	{ $$ = $1 * $3; acc = $$;}
-	| exp '/' exp 	{ $$ = $1 / $3; acc = $$;}
-	| exp '%' exp	{ $$ = $1 % $3;	acc = $$;}
+	| ID
+	| exp '-' exp	{ $$ = $1 - $3; }
+	| exp '+' exp 	{ $$ = $1 + $3; }
+	| exp '*' exp 	{ $$ = $1 * $3; }
+	| exp '/' exp 	{ $$ = $1 / $3; }
+	| exp '%' exp	{ $$ = $1 % $3;	}
 	| '-' exp		{ $$ = (-1) * $2; }
-	| exp '^' exp	{ $$ = pow($1,$3); acc = $$;}
-	| exp < exp 	{ $$ = $1 < $3; acc = $$;}
-	| exp > exp		{ $$ = $1 > $3; acc = $$;}
-	| exp == exp	{ $$ = $1 == $3; acc = $$;}
-	| NOT exp 		{ $$ = ~ $2;	acc = $$;}
-	| '(' exp ')'	{ $$ = $2;		acc = $$;}
+	| exp '^' exp	{ $$ = pow($1,$3); }
+	| '(' exp ')'	{ $$ = $2;		}
+	| exp EQUAL exp { $$ = $1 == $3; }
+	| exp '>' exp	{ $$ = $1 > $3; }
+	| exp '<' exp  	{ $$ = $1 < $3; }
 	;
 %%
 
@@ -84,9 +85,10 @@ int pop(){
 		int temp = topNode->val;
 		node *tempNode = topNode->next;
 		free(topNode);
-		topNode = topNode->next;
+		topNode = tempNode;
 		return temp;
 	}
 	else{printf("! ERROR\n");}
 	return 0;
 }
+
