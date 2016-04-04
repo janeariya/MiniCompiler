@@ -4,19 +4,6 @@
 #include <math.h>
 extern int yylex ();
 extern void yyerror ( char *);
-typedef struct node{
-	int val;
-	struct node * next;	
-} node;
-
-node *getNewNode(int val,node *next);
-void push(int val);
-int pop(void);
-
-int acc = 0;
-int size = 0;
-int arr[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-node * topNode = NULL;
 
 %}
 %union{
@@ -64,31 +51,3 @@ exp: NUM
 	| exp '<' exp  	{ $$ = $1 < $3; }
 	;
 %%
-
-node *getNewNode(int val,node *next){
-	node * n = (node *)malloc(sizeof(node *));
-	n->val = val;
-	n->next = next;
-	return n;
-}
-void push(int val){
-	size++;
-	node *newNode = getNewNode(val,NULL);
-	if(topNode != NULL){
-		newNode->next = topNode;
-	}
-	topNode = newNode;
-}
-int pop(){
-	if(topNode != NULL){
-		size--;
-		int temp = topNode->val;
-		node *tempNode = topNode->next;
-		free(topNode);
-		topNode = tempNode;
-		return temp;
-	}
-	else{printf("! ERROR\n");}
-	return 0;
-}
-
