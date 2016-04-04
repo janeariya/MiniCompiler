@@ -11,9 +11,8 @@ Show					{	return SHOW; }
 if						{	return IF;	}
 Loop					{	return LOOP;	}
 to						{	return TO; }
-SHOW					{	return SHOW; }
 $[a-z]					{	
-							yylval.dval = (int)yytext[1]-48;
+							yylval.dval = (int)yytext[1]-97;
 							return ID;
 						}
 [0-9]+					{ 	
@@ -30,6 +29,12 @@ $[a-z]					{
 															yylval.dval = strtol(yytext,&endx,16);
 															return NUM;	
 														}
+L?\"(\\.|[^\\"])*\"		{	
+							char sub[128];
+							substring(yytext,sub,2,strlen(yytext)-2);
+							yylval.strval = sub;
+							return STRING; 
+						}
 "+"						{ 	return '+'; }
 "-"						{ 	return '-'; }
 "%"						{	return '%'; }
@@ -48,7 +53,7 @@ $[a-z]					{
 "{"						{	return '{';	}
 "}"						{	return '}';		}
 [ \t ' ' ]+ ;
-. 	{ return ERROR;}
+. 						{	printf(" ERROR! ");}
 %%
 
 void yyerror ( char * str ) { 
@@ -58,11 +63,9 @@ void yyerror ( char * str ) {
 int yywrap ( void ) { }
 
 int main ( void ) {
-		printf("> ");
-		while(1){
+			 printf("> "); 
 			yyparse ();
-			printf("%s",yylex());
-		}
+
 }
 
 comment()
@@ -77,4 +80,14 @@ loop:
 		goto loop;
 	}
 
+}
+
+void substring(char s[], char sub[], int p, int l) {
+   int c = 0;
+ 
+   while (c < l) {
+      sub[c] = s[p+c-1];
+      c++;
+   }
+   sub[c] = '\0';
 }

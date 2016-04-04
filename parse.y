@@ -21,10 +21,12 @@ node * topNode = NULL;
 %}
 %union{
 	int dval;
+	char *strval;
 }
 %token <dval> NUM
 %token <dval> ID
-%token SHOW INT IF LOOP STRING ASSIGN TO ERROR
+%token <strval> STRING
+%token SHOW INT IF LOOP ASSIGN TO
 %right '>' '<'
 %left '+' '-' 
 %left '*' '/' '%' EQUAL
@@ -36,6 +38,8 @@ node * topNode = NULL;
 %%
 result :
 	result stas '\n' { printf("> "); }	
+	| 	result if '\n' 	{ printf("> "); }
+	| 	result loop '\n' 	{ printf("> "); }
 	|
 	;
 stas :
@@ -43,14 +47,20 @@ stas :
 sta :
 	exp				{ printf("= %d\n", $1); }
 	| SHOW exp 		{ printf("= %d\n",$2); }
-	| IF exp '{' stas '}'	{}
-	| LOOP exp '{' stas '}'	{}
-	| LOOP ID ':' INT TO INT '{' stas '}' {}
+	| SHOW STRING 	{ printf("= %s\n", $2);}
 	| ID ASSIGN exp	{ arr[$1] = $3; printf("%d\n",arr[$1]);}
-	| ERROR {printf("Error!!");}
+	;
+if :
+	 IF '(' exp ')' '{' stas '}'	{ if($3)
+	 									{ $6 }
+	 								}
+	;
+loop :
+	 LOOP '(' exp ')' '{' stas '}'	{}
+	| LOOP ID ':' INT TO INT '{' stas '}' {}
 	;
 exp: NUM
-	| ID
+	| ID   			{ $$ = arr[$1]; }
 	| exp '-' exp	{ $$ = $1 - $3; }
 	| exp '+' exp 	{ $$ = $1 + $3; }
 	| exp '*' exp 	{ $$ = $1 * $3; }
@@ -92,3 +102,19 @@ int pop(){
 	return 0;
 }
 
+/*struct AstElement* makeIf(struct AstElement* cond, struct AstElement* exec)
+{
+    struct AstElement* result = checkAlloc(sizeof(*result));
+    result->kind = ekWhile;
+    result->data.Stmt.cond = cond;
+    result->data.whileStmt.statements = exec;
+    return result;
+}
+struct AstElement* makeWhile(struct AstElement* cond, struct AstElement* exec)
+{
+    struct AstElement* result = checkAlloc(sizeof(*result));
+    result->kind = ekWhile;
+    result->data.whileStmt.cond = cond;
+    result->data.whileStmt.statements = exec;
+    return result;
+}*/
