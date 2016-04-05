@@ -4,33 +4,39 @@
 extern int yylex ();
 extern void yyerror ( char *);
 
-struct var_int{
-	char * name;
+typedef struct var_int{
+	char name;
 	int val;
-}
+	struct var_int* next;
+}var_int;
 
-struct var_sting{
+typedef struct var_sting{
 	char *name;
 	char val[128];
 	int len;
-}
+	struct var_string* next;
+}var_string;
+var_int* head_int;
+var_string* head_string;
 
 %}
 
 %union{
 	int dval;
 	char *strval;
+	char chval;
 }
+
 %token <dval> NUM
-%token <dval> ID
+%token <chval> ID
 %token <strval> STRING
 %token SHOW INT IF LOOP ASSIGN TO END ERROR
-%right '>' '<'
 %left '+' '-' 
 %left '*' '/' '%' EQUAL
 %left '(' ')'
 %left '{' '}'
-%type <dval> exp var
+%type <dval> exp cond
+%type <chval> var
 %start result
 %%
 result :
@@ -42,19 +48,23 @@ result :
 stas :
 	| stas sta ';'
 sta :
-	exp										{}
 	| SHOW exp 								{}
 	| SHOW STRING 							{}
-	| ID ASSIGN exp							{}
-	| ID ASSIGN STRING						{}
+	| ID ASSIGN exp							{   if(!hasVar($1))
+												{
+													enQInt($1,$3);
+												}
+												else
+												{
+
+												}
+											}
 	;
 if :
-	 IF '(' exp ')' '{' stas '}'			{
+	 IF '(' cond ')' '{' stas '}'			{
 	 										}
 	;
-loop :
-	 LOOP '(' exp ')' '{' stas '}'			
-	| LOOP ID ':' INT TO INT '{' stas '}' 	
+loop : LOOP ID ':' INT TO INT '{' stas '}' 	
 	;
 exp: NUM
 	| ID   									{ $$ = arr[$1]; }
@@ -65,9 +75,9 @@ exp: NUM
 	| exp '%' exp							{ $$ = $1 % $3;	}
 	| '-' exp								{ $$ = (-1) * $2; }
 	| '(' exp ')'							{ $$ = $2; }
+	;
+cond : NUM
 	| exp EQUAL exp 						{ $$ = $1 == $3; }
-	| exp '>' exp							{ $$ = $1 > $3; }
-	| exp '<' exp  							{ $$ = $1 < $3; }
 	;
 var : ID 			{ if(hasVar($1))
 						{
@@ -81,20 +91,33 @@ var : ID 			{ if(hasVar($1))
 	;     
 %%
 
-node *getNewNode(int val,node *next){
-	node * n = (node *)malloc(sizeof(node *));
+node *getNewVar_int(char name,int val,var_int *next){
+	var_int * n = (var_int *)malloc(sizeof(var_int *));
+	n->name = name;
 	n->val = val;
 	n->next = next;
 	return n;
 }
-void push(int val){
-	size++;
-	node *newNode = getNewNode(val,NULL);
-	if(topNode != NULL){
-		newNode->next = topNode;
-	}
-	topNode = newNode;
+node *getNewVar_string(char* name,char[] val,int len,var_string *next){
+	var_string * n = (var_string *)malloc(sizeof(var_string *));
+	n->name = name;
+	n->val = val;
+	n->len = len;
+	n->next = next;
+	return n;
 }
+
+
+void enQInt(char name,int val){
+	var_int *newVar = getNewVar_int(name,val,NULL);
+	if((*head_int) != NULL){
+		(*head_int)->next = newVar;
+	}
+	else{
+		head_int= &newVar;
+	}
+}
+
 int pop(){
 	if(topNode != NULL){
 		size--;
@@ -107,26 +130,10 @@ int pop(){
 	else{printf("! ERROR\n");}
 	return 0;
 }
-int hasVar(int id){
-	if(arr[id]!=0){
+
+int hasVar(char id){
+	if(arr[(int)id-97]!=0){
 		return 1;
 	}
 	return 0;
 }
-
-/*struct AstElement* makeIf(struct AstElement* cond, struct AstElement* exec)
-{
-    struct AstElement* result = checkAlloc(sizeof(*result));
-    result->kind = ekWhile;
-    result->data.Stmt.cond = cond;
-    result->data.whileStmt.statements = exec;
-    return result;
-}
-struct AstElement* makeWhile(struct AstElement* cond, struct AstElement* exec)
-{
-    struct AstElement* result = checkAlloc(sizeof(*result));
-    result->kind = ekWhile;
-    result->data.whileStmt.cond = cond;
-    result->data.whileStmt.statements = exec;
-    return result;
-}*/

@@ -12,9 +12,15 @@ if														{	return IF;	}
 Loop													{	return LOOP;	}
 to														{	return TO; }
 $[a-z]													{	
-															yylval.dval = (int)yytext[1]-48;
+															yylval.chval = (char)yytext[1];
 															return ID;
 														}
+$[a-z][a-zA-Z0-9]+|	$[A-Z0-9]?							{
+															printf("Wrong variable name %s\n",yytext);
+	
+														}
+
+
 [0-9]+													{ 	
 															yylval.dval = atoi(yytext); 
 															return NUM; 
@@ -35,8 +41,6 @@ $[a-z]													{
 "%"														{	return '%'; }
 "*"														{ 	return '*'; }
 "/"														{ 	return '/'; }
-">"														{	return '>'; }
-"<"														{	return '<'; }
 "=="													{	return EQUAL;	}
 "="														{	return ASSIGN;	}	
 "\n"													{	return END; }
