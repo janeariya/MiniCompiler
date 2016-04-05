@@ -5,49 +5,113 @@
 extern int yylex ();
 extern void yyerror ( char *);
 
+struct var_int{
+	char * name;
+	int val;
+}
+
+struct var_sting{
+	char *name;
+	char val[128];
+	int len;
+}
+
 %}
+
 %union{
 	int dval;
+	char *strval;
 }
 %token <dval> NUM
 %token <dval> ID
-%token SHOW INT IF LOOP STRING ASSIGN TO ERROR
+%token <strval> STRING
+%token SHOW INT IF LOOP ASSIGN TO END
 %right '>' '<'
 %left '+' '-' 
 %left '*' '/' '%' EQUAL
-%right '^'
 %left '(' ')'
 %left '{' '}'
 %type <dval> exp
 %start result
 %%
 result :
-	result stas '\n' { printf("> "); }	
+	result stas END 						{ printf("> "); }	
+	| 	result if END 						{ printf("> "); }
+	| 	result loop END 					{ printf("> "); }
 	|
 	;
 stas :
 	| stas sta ';'
 sta :
-	exp				{ printf("= %d\n", $1); }
-	| SHOW exp 		{ printf("= %d\n",$2); }
-	| IF exp '{' stas '}'	{}
-	| LOOP exp '{' stas '}'	{}
-	| LOOP ID ':' INT TO INT '{' stas '}' {}
-	| ID ASSIGN exp	{ arr[$1] = $3; printf("%d\n",arr[$1]);}
-	| ERROR {printf("Error!!");}
+	exp										{}
+	| SHOW exp 								{}
+	| SHOW STRING 							{}
+	| ID ASSIGN exp							{}
+	| ID ASSIGN STRING						{}
+	;
+if :
+	 IF '(' exp ')' '{' stas '}'			{
+	 										}
+	;
+loop :
+	 LOOP '(' exp ')' '{' stas '}'			
+	| LOOP ID ':' INT TO INT '{' stas '}' 	
 	;
 exp: NUM
-	| ID
-	| exp '-' exp	{ $$ = $1 - $3; }
-	| exp '+' exp 	{ $$ = $1 + $3; }
-	| exp '*' exp 	{ $$ = $1 * $3; }
-	| exp '/' exp 	{ $$ = $1 / $3; }
-	| exp '%' exp	{ $$ = $1 % $3;	}
-	| '-' exp		{ $$ = (-1) * $2; }
-	| exp '^' exp	{ $$ = pow($1,$3); }
-	| '(' exp ')'	{ $$ = $2;		}
-	| exp EQUAL exp { $$ = $1 == $3; }
-	| exp '>' exp	{ $$ = $1 > $3; }
-	| exp '<' exp  	{ $$ = $1 < $3; }
+	| ID   									{ $$ = arr[$1]; }
+	| exp '-' exp							{ $$ = $1 - $3; }
+	| exp '+' exp 							{ $$ = $1 + $3; }
+	| exp '*' exp 							{ $$ = $1 * $3; }
+	| exp '/' exp 							{ $$ = $1 / $3; }
+	| exp '%' exp							{ $$ = $1 % $3;	}
+	| '-' exp								{ $$ = (-1) * $2; }
+	| '(' exp ')'							{ $$ = $2; }
+	| exp EQUAL exp 						{ $$ = $1 == $3; }
+	| exp '>' exp							{ $$ = $1 > $3; }
+	| exp '<' exp  							{ $$ = $1 < $3; }
 	;
 %%
+
+node *getNewNode(int val,node *next){
+	node * n = (node *)malloc(sizeof(node *));
+	n->val = val;
+	n->next = next;
+	return n;
+}
+void push(int val){
+	size++;
+	node *newNode = getNewNode(val,NULL);
+	if(topNode != NULL){
+		newNode->next = topNode;
+	}
+	topNode = newNode;
+}
+int pop(){
+	if(topNode != NULL){
+		size--;
+		int temp = topNode->val;
+		node *tempNode = topNode->next;
+		free(topNode);
+		topNode = tempNode;
+		return temp;
+	}
+	else{printf("! ERROR\n");}
+	return 0;
+}
+
+/*struct AstElement* makeIf(struct AstElement* cond, struct AstElement* exec)
+{
+    struct AstElement* result = checkAlloc(sizeof(*result));
+    result->kind = ekWhile;
+    result->data.Stmt.cond = cond;
+    result->data.whileStmt.statements = exec;
+    return result;
+}
+struct AstElement* makeWhile(struct AstElement* cond, struct AstElement* exec)
+{
+    struct AstElement* result = checkAlloc(sizeof(*result));
+    result->kind = ekWhile;
+    result->data.whileStmt.cond = cond;
+    result->data.whileStmt.statements = exec;
+    return result;
+}*/

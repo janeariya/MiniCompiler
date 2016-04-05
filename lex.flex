@@ -25,6 +25,7 @@ $[a-z]													{
 															yylval.dval = strtol(yytext,&end,2);
 															return NUM;	
 														}
+
 [0-9a-fA-F]([0-9a-fA-F])?([0-9a-fA-F])?([0-9a-fA-F])?h 	{	
 															char *endx;
 															yylval.dval = strtol(yytext,&endx,16);
@@ -37,18 +38,23 @@ $[a-z]													{
 "/"														{ 	return '/'; }
 ">"														{	return '>'; }
 "<"														{	return '<'; }
-"^"														{	return '^'; }
 "=="													{	return EQUAL;	}
 "="														{	return ASSIGN;	}	
-"\n"													{	return *yytext; }
+"\n"													{	return END; }
 "("														{	return '('; }
 ")"														{	return	')'; }
 ";"														{	return ';'; 	}
 "#"														{	comment(); 		}
 "{"														{	return '{';	}
 "}"														{	return '}';		}
+L?\"(\\.|[^\\"])*\"										{	
+															char sub[128];
+															substring(yytext,sub,2,strlen(yytext)-2);
+															yylval.strval = sub;
+															return STRING; 
+														}
 [ \t ' ' ]+ ;
-. 	{ return ERROR;}
+. 														{	return ERROR;}
 %%
 
 void yyerror ( char * str ) { 
@@ -58,11 +64,9 @@ void yyerror ( char * str ) {
 int yywrap ( void ) { }
 
 int main ( void ) {
-		printf("> ");
-		while(1){
+			 printf("> "); 
 			yyparse ();
-			printf("%s",yylex());
-		}
+
 }
 
 comment()
@@ -77,4 +81,14 @@ loop:
 		goto loop;
 	}
 
+}
+
+void substring(char s[], char sub[], int p, int l) {
+   int c = 0;
+ 
+   while (c < l) {
+      sub[c] = s[p+c-1];
+      c++;
+   }
+   sub[c] = '\0';
 }
