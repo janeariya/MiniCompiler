@@ -1,7 +1,6 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 extern int yylex ();
 extern void yyerror ( char *);
 typedef struct node{
@@ -26,7 +25,7 @@ node * topNode = NULL;
 %token <dval> NUM
 %token <dval> ID
 %token <strval> STRING
-%token SHOW INT IF LOOP ASSIGN TO
+%token SHOW INT IF LOOP ASSIGN TO ERROR
 %right '>' '<'
 %left '+' '-' 
 %left '*' '/' '%' EQUAL
@@ -49,16 +48,19 @@ sta :
 	| SHOW exp 		{ printf("= %d\n",$2); }
 	| SHOW STRING 	{ printf("= %s\n", $2);}
 	| ID ASSIGN exp	{ arr[$1] = $3; printf("%d\n",arr[$1]);}
+	| ID eer ASSIGN exp	{ printf(" Variable name ERROR\n"); }
 	;
 if :
 	 IF '(' exp ')' '{' stas '}'	{ if($3)
-	 									{ $6 }
+	 									{ printf("if"); }
 	 								}
 	;
 loop :
 	 LOOP '(' exp ')' '{' stas '}'	{}
 	| LOOP ID ':' INT TO INT '{' stas '}' {}
 	;
+eer : 
+	| eer ERROR;
 exp: NUM
 	| ID   			{ $$ = arr[$1]; }
 	| exp '-' exp	{ $$ = $1 - $3; }
@@ -67,7 +69,6 @@ exp: NUM
 	| exp '/' exp 	{ $$ = $1 / $3; }
 	| exp '%' exp	{ $$ = $1 % $3;	}
 	| '-' exp		{ $$ = (-1) * $2; }
-	| exp '^' exp	{ $$ = pow($1,$3); }
 	| '(' exp ')'	{ $$ = $2;		}
 	| exp EQUAL exp { $$ = $1 == $3; }
 	| exp '>' exp	{ $$ = $1 > $3; }

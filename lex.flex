@@ -42,7 +42,6 @@ L?\"(\\.|[^\\"])*\"		{
 "/"						{ 	return '/'; }
 ">"						{	return '>'; }
 "<"						{	return '<'; }
-"^"						{	return '^'; }
 "=="					{	return EQUAL;	}
 "="						{	return ASSIGN;	}	
 "\n"					{	return *yytext; }
@@ -53,7 +52,7 @@ L?\"(\\.|[^\\"])*\"		{
 "{"						{	return '{';	}
 "}"						{	return '}';		}
 [ \t ' ' ]+ ;
-. 						{	printf(" ERROR! ");}
+. 						{	return ERROR;}
 %%
 
 void yyerror ( char * str ) { 
