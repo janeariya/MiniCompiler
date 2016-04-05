@@ -11,7 +11,6 @@ Show													{	return SHOW; }
 if														{	return IF;	}
 Loop													{	return LOOP;	}
 to														{	return TO; }
-SHOW													{	return SHOW; }
 $[a-z]													{	
 															yylval.dval = (int)yytext[1]-48;
 															return ID;

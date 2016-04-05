@@ -1,7 +1,6 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 extern int yylex ();
 extern void yyerror ( char *);
 
@@ -25,13 +24,13 @@ struct var_sting{
 %token <dval> NUM
 %token <dval> ID
 %token <strval> STRING
-%token SHOW INT IF LOOP ASSIGN TO END
+%token SHOW INT IF LOOP ASSIGN TO END ERROR
 %right '>' '<'
 %left '+' '-' 
 %left '*' '/' '%' EQUAL
 %left '(' ')'
 %left '{' '}'
-%type <dval> exp
+%type <dval> exp var
 %start result
 %%
 result :
@@ -70,6 +69,16 @@ exp: NUM
 	| exp '>' exp							{ $$ = $1 > $3; }
 	| exp '<' exp  							{ $$ = $1 < $3; }
 	;
+var : ID 			{ if(hasVar($1))
+						{
+							$$=$1;
+						}
+						else
+						{
+							printf("Variable %c never assign\n",$1+97);
+						}
+					}   
+	;     
 %%
 
 node *getNewNode(int val,node *next){
@@ -96,6 +105,12 @@ int pop(){
 		return temp;
 	}
 	else{printf("! ERROR\n");}
+	return 0;
+}
+int hasVar(int id){
+	if(arr[id]!=0){
+		return 1;
+	}
 	return 0;
 }
 
