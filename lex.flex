@@ -15,6 +15,7 @@ $[a-z]					{
 							yylval.dval = (int)yytext[1]-97;
 							return ID;
 						}
+$[a-z][a-z]+			{   printf("Wrong Variable name %s \n",yytext);}
 [0-9]+					{ 	
 							yylval.dval = atoi(yytext); 
 							return NUM; 

@@ -32,7 +32,7 @@ node * topNode = NULL;
 %right '^'
 %left '(' ')'
 %left '{' '}'
-%type <dval> exp
+%type <dval> exp var
 %start result
 %%
 result :
@@ -44,11 +44,9 @@ result :
 stas :
 	| stas sta ';'
 sta :
-	exp				{ printf("= %d\n", $1); }
 	| SHOW exp 		{ printf("= %d\n",$2); }
 	| SHOW STRING 	{ printf("= %s\n", $2);}
-	| ID ASSIGN exp	{ arr[$1] = $3; printf("%d\n",arr[$1]);}
-	| ID eer ASSIGN exp	{ printf(" Variable name ERROR\n"); }
+	| ID ASSIGN exp	{ arr[$1] = $3;}
 	;
 if :
 	 IF '(' exp ')' '{' stas '}'	{ if($3)
@@ -57,12 +55,10 @@ if :
 	;
 loop :
 	 LOOP '(' exp ')' '{' stas '}'	{}
-	| LOOP ID ':' INT TO INT '{' stas '}' {}
+	| LOOP var ':' INT TO INT '{' stas '}' {}
 	;
-eer : 
-	| eer ERROR;
 exp: NUM
-	| ID   			{ $$ = arr[$1]; }
+	| var   		{ $$ = arr[$1]; }
 	| exp '-' exp	{ $$ = $1 - $3; }
 	| exp '+' exp 	{ $$ = $1 + $3; }
 	| exp '*' exp 	{ $$ = $1 * $3; }
@@ -74,6 +70,16 @@ exp: NUM
 	| exp '>' exp	{ $$ = $1 > $3; }
 	| exp '<' exp  	{ $$ = $1 < $3; }
 	;
+var : ID 			{ if(hasVar($1))
+						{
+							$$=$1;
+						}
+						else
+						{
+							printf("Variable %c never assign\n",$1+97);
+						}
+					}   
+	;     
 %%
 
 node *getNewNode(int val,node *next){
@@ -100,6 +106,12 @@ int pop(){
 		return temp;
 	}
 	else{printf("! ERROR\n");}
+	return 0;
+}
+int hasVar(int id){
+	if(arr[id]!=0){
+		return 1;
+	}
 	return 0;
 }
 
