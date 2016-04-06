@@ -48,7 +48,7 @@ result :
 stas :
 	| stas sta ';'
 sta :
-	| SHOW exp 								{}
+	SHOW exp 								{}
 	| SHOW STRING 							{}
 	| ID ASSIGN exp							{   if(!hasVar($1))
 												{
