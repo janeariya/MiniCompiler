@@ -8,16 +8,23 @@ char* int_alloc(char* name,int val){
 char* string_alloc(char* name,char* val){
 	char* asscode;
 	sprintf(asscode,"%s DB \'%s\',0xA,0xD \n",name,val);
-	sprintf(asscode,"%slen EQU $-%s \n",name,val,name);
 	return asscode;
 }
 
 char* show_string(char* name){
 	char asscode;
-	sprintf(asscode,"mov eax, 4 \n");
-	sprintf(asscode,"mov ebx, 1 \n");
-	sprintf(asscode,"mov ecx, %s \n",name);
-	sprintf(asscode,"mov ecx, %slen \n",name);
-	sprintf(asscode,"int 0x80 \n");
+	sprintf(asscode,"push %s \n",name);
+	sprintf(asscode,"JM show \n");
 	return asscode;
 }   
+
+char* show_string_pro(){
+	char asscode;
+	sprintf(asscode,"show: \n");
+	sprintf(asscode,"call printf \n");
+	sprintf(asscode,"ret \n");
+}
+char* show_int_alloc(){
+	char asscode;
+	sprintf(asscode,"show_int_alloc %d,10,0\n");
+}
