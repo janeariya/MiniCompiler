@@ -44,7 +44,7 @@ char* add(char* operandleft,char* operandright){
 		sprintf(asscode,"\tmov -%s(%rbp), %rax\n")
 	}
 
-	sprintf(asscode,"\tadd %rbx, %rax\n");
+	sprintf(asscode,"\tadd %rbx, %rax\n"); // %rax = %rax + %rbx
 	sprintf(asscode,"\tpush %rax\n");
 	return asscode;
 }
@@ -65,7 +65,28 @@ char* sub(char* operandleft,char* operandright){
 		sprintf(asscode,"\tmov -%s(%rbp), %rax\n")
 	}
 
-	sprintf(asscode,"\tsub %rbx, %rax\n");
+	sprintf(asscode,"\tsub %rbx, %rax\n"); // %rax = %rax - %rbx
+	sprintf(asscode,"\tpush %rax\n");
+	return asscode;
+}
+
+char* mul(char* operandleft,char* operandright){
+	char* asscode = (char*)malloc(sizeof(char*));
+	//no operand passed means get it from stack
+	if(operandright == ''){
+		sprintf(asscode,"\tpop %rbx\n");
+	}
+	else{
+		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n");
+	}
+	if(operandleft == ''){
+		sprintf(asscode,"\tpop %rax\n");
+	}
+	else{
+		sprintf(asscode,"\tmov -%s(%rbp), %rax\n")
+	}
+
+	sprintf(asscode,"\tmul %rbx\n"); //%rax = %rax x %rbx
 	sprintf(asscode,"\tpush %rax\n");
 	return asscode;
 }
