@@ -1,6 +1,6 @@
 #include "asmGenerator.h"
 
-char* init_var(char* taroffset){
+char* init_var(char* taroffset) {
 	char* asscode = (char *)malloc(sizeof(char*));
 	sprintf(asscode,"\txor %rax, %rax\n"); //clear reg
 	sprintf(asscode,"\tmov %rax,-%s(%rbp)\n",taroffset); //alloc var count offset from base pointer
@@ -10,7 +10,7 @@ char* init_var(char* taroffset){
 char* assign(char* opOffset,char* taroffset){
 	char* asscode = (char *)malloc(sizeof(char*));
 	//if op == '' means $a = add, sub, mul, div, mod, const
-	if(op == ''){
+	if(opOffset == NULL){
 		sprintf(asscode,"\tpop %rax\n");
 		sprintf(asscode,"\tmov %rax,-%s(%rbp)\n",taroffset);
 	}
@@ -31,17 +31,17 @@ char* constn(char* val){
 char* add(char* operandleft,char* operandright){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//no operand passed means get it from stack
-	if(operandright == ''){
+	if(operandright == NULL){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
 		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n");
 	}
-	if(operandleft == ''){
+	if(operandleft == NULL){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp), %rax\n")
+		sprintf(asscode,"\tmov -%s(%rbp), %rax\n");
 	}
 
 	sprintf(asscode,"\tadd %rbx, %rax\n"); // %rax = %rax + %rbx
@@ -52,17 +52,17 @@ char* add(char* operandleft,char* operandright){
 char* sub(char* operandleft,char* operandright){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//no operand passed means get it from stack
-	if(operandright == ''){
+	if(operandright == NULL){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
 		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n");
 	}
-	if(operandleft == ''){
+	if(operandleft == NULL){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp), %rax\n")
+		sprintf(asscode,"\tmov -%s(%rbp), %rax\n");
 	}
 
 	sprintf(asscode,"\tsub %rbx, %rax\n"); // %rax = %rax - %rbx
@@ -73,20 +73,20 @@ char* sub(char* operandleft,char* operandright){
 char* mul(char* operandleft,char* operandright){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//no operand passed means get it from stack
-	if(operandright == ''){
+	if(operandright == NULL){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
 		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n");
 	}
-	if(operandleft == ''){
+	if(operandleft == NULL){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp), %rax\n")
+		sprintf(asscode,"\tmov -%s(%rbp), %rax\n");
 	}
 
-	sprintf(asscode,"\tmul %rbx\n"); //%rax = %rax x %rbx
+	sprintf(asscode,"\timul %rbx\n"); //%rax = %rax x %rbx ; imul is signed
 	sprintf(asscode,"\tpush %rax\n");
 	return asscode;
 }
@@ -94,9 +94,9 @@ char* mul(char* operandleft,char* operandright){
 int fileGen(){
 	FILE * fp;
 	fp = fopen ("asm.s", "w+");
-	while(){
+/*	while(){
 		fprintf(fp, "%s",);
-	}
+	}*/
 
 	fclose(fp);
 	return(0);
