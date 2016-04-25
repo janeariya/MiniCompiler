@@ -90,3 +90,14 @@ char* mul(char* operandleft,char* operandright){
 	sprintf(asscode,"\tpush %rax\n");
 	return asscode;
 }
+
+int fileGen(){
+	FILE * fp;
+	fp = fopen ("asm.s", "w+");
+	while(){
+		fprintf(fp, "%s",);
+	}
+
+	fclose(fp);
+	return(0);
+}

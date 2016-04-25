@@ -1,6 +1,7 @@
-#include<stdio.h>
-#include<string.h>
-#include<conio.h>
+#include <stdio.h>
+#include <string.h>
+#include <conio.h>
+#include <stdlib.h>
 
 char* init_var(char* taroffset);
 char* assign(char* opOffset,char* taroffset);
