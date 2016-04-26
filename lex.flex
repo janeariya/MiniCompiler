@@ -12,7 +12,7 @@ if														{	return IF;	}
 Loop													{	return LOOP;	}
 to														{	return TO; }
 $[a-z]													{	
-															yylval.chval = (char)yytext[1];
+															yylval.chval = (char)yytext[1]-'a';
 															return ID;
 														}
 $[a-z][a-zA-Z0-9]+|	$[A-Z0-9]?							{

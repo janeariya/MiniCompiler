@@ -1,15 +1,20 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "ast.h"
+#include "asmGenerator.h"
 extern int yylex ();
 extern void yyerror ( char *);
 
+byte isReginit[] = {0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0};
 %}
 
 %union{
 	int dval;
 	char *strval;
-	char chval;
+	int chval;
 }
 
 %token <dval> NUM
@@ -24,37 +29,57 @@ extern void yyerror ( char *);
 %type <chval> var
 %start result
 %%
-result :
-	result stas END 						{}	
-	| 	result if END 						{}
-	| 	result loop END 					{}
-	|
-	;
-stas :
-	| stas sta ';'
-sta :
-	SHOW exp 								{}
-	| SHOW STRING 							{}
-	| ID ASSIGN exp							{}
-	;
-if :
-	 IF '(' cond ')' '{' stas '}'			{}
-	;
-loop : LOOP ID ':' INT TO INT '{' stas '}'  {}	
-	;
-exp: NUM
-	| ID   									{ $$ = arr[$1]; }
-	| exp '-' exp							{ $$ = $1 - $3; }
-	| exp '+' exp 							{ $$ = $1 + $3; }
-	| exp '*' exp 							{ $$ = $1 * $3; }
-	| exp '/' exp 							{ $$ = $1 / $3; }
-	| exp '%' exp							{ $$ = $1 % $3;	}
-	| '-' exp								{ $$ = (-1) * $2; }
-	| '(' exp ')'							{ $$ = $2; }
-	;
-cond : NUM
-	| exp EQUAL exp 						{ $$ = $1 == $3; }
-	;
-var : ID 									{}   
-	;     
+result 	:
+			stas END result	 							
+		| 	if END result 						
+		| 	loop END result 
+		|										
+		;
+
+stas 	: 
+		| 	sta stas
+
+sta 	:
+			SHOW exp 							{}
+		| 	SHOW STRING 						{}
+		| 	var ASSIGN exp						{	}
+		;
+
+if 		:
+	 		IF '(' cond ')' '{' stas '}'		{}
+		;
+
+loop 	: 
+			LOOP var ':' INT TO INT '{' stas '}' {}	
+		;
+
+exp		: 
+			NUM									{ 	struct node* const = init(-1,$1,NULL,NULL);
+													enQ(constn($1));
+													push(const);
+												}
+		| 	ID   								{}
+		| 	exp '-' exp							{}
+		| 	exp '+' exp 						{}
+		| 	exp '*' exp 						{}
+		| 	exp '/' exp							{}
+		| 	exp '%' exp							{}
+		| 	'-' exp								{}
+		| 	'(' exp ')'							{}
+		;
+
+cond 	: 
+			NUM									{}
+		| 	exp EQUAL exp 						{}
+		;
+
+var 	: 
+			ID 									{	struct node* var = init($1,-1,NULL,NULL);
+													if(isReginit[$1] == 0){
+														enQ(init_var($1));
+														isReginit[$1] = 1;
+													}
+													push(var);
+												}   
+		;     
 %%

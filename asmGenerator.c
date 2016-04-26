@@ -10,7 +10,7 @@ char* init_var(char* taroffset) {
 char* assign(char* opOffset,char* taroffset){
 	char* asscode = (char *)malloc(sizeof(char*));
 	//if op == '' means $a = add, sub, mul, div, mod, const
-	if(opOffset == NULL){
+	if(opOffset == '-1'){
 		sprintf(asscode,"\tpop %rax\n");
 		sprintf(asscode,"\tmov %rax,-%s(%rbp)\n",taroffset);
 	}
@@ -91,13 +91,13 @@ char* mul(char* operandleft,char* operandright){
 	return asscode;
 }
 
-int fileGen(){
+/*int fileGen(node* q){
 	FILE * fp;
 	fp = fopen ("asm.s", "w+");
-/*	while(){
+	while(){
 		fprintf(fp, "%s",);
-	}*/
+	}
 
 	fclose(fp);
 	return(0);
-}
+}*/
