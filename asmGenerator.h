@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <conio.h>
 #include <stdlib.h>
 
 char* init_var(int taroffset);

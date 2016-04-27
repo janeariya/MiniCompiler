@@ -3,7 +3,8 @@
 
 node_q* getNewnode_q (char* ass){
 	
-	node_q* newnode_q = (node_q*)malloc(sizeof(node_q*));
+	node_q* newnode_q = (node_q*)malloc(sizeof(node_q));
+    newnode_q->ass = (char *)malloc(strlen(ass)+1);
 	newnode_q->ass = ass;
     newnode_q->next = NULL;
     return newnode_q;
@@ -45,3 +46,12 @@ int isEmpty(node_q* node_q){
     else
         return 1;
 }
+
+/*int main(int argc, char const *argv[])
+{
+    node_q* head = NULL;
+    node_q* tail = NULL;
+    enQ(&head,&tail,"donus");
+    printf("%s\n",deQ(&head,&tail));
+    return 0;
+}*/

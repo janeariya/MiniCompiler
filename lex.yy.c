@@ -498,10 +498,25 @@ char *yytext;
 #line 1 "lex.flex"
 #line 2 "lex.flex"
 #include "parse.tab.h"
-#include <string.h>
-void yyerror ( char *); 
-int yyparse ( void ); 
-#line 505 "lex.yy.c"
+#include <cstdio>
+#include <iostream>
+#define YY_DECL extern "C" int yylex()
+using namespace std;
+
+/*comment(void)
+{
+	char c, c1;
+
+loop:
+	while ((c = yyinput()) != '\\' && c != 0);
+
+	if ((c1 = yyinput()) != 'n' && c != 0)
+	{
+		goto loop;
+	}
+
+}*/
+#line 520 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -688,9 +703,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 8 "lex.flex"
+#line 23 "lex.flex"
 
-#line 694 "lex.yy.c"
+#line 709 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -775,27 +790,27 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 9 "lex.flex"
+#line 24 "lex.flex"
 {	return SHOW; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 10 "lex.flex"
+#line 25 "lex.flex"
 {	return IF;	}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 11 "lex.flex"
+#line 26 "lex.flex"
 {	return LOOP;	}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 12 "lex.flex"
+#line 27 "lex.flex"
 {	return TO; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 13 "lex.flex"
+#line 28 "lex.flex"
 {	
 															yylval.chval = (char)yytext[1]-'a';
 															return ID;
@@ -803,7 +818,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 17 "lex.flex"
+#line 32 "lex.flex"
 { 	
 															printf("%d\n",atoi(yytext));
 															yylval.dval = atoi(yytext); 
@@ -813,7 +828,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "lex.flex"
+#line 38 "lex.flex"
 {	
 															char *end;
 															yylval.dval = strtol(yytext,&end,2);
@@ -822,7 +837,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 29 "lex.flex"
+#line 44 "lex.flex"
 {	
 															char *endx;
 															yylval.dval = strtol(yytext,&endx,16);
@@ -831,91 +846,91 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 34 "lex.flex"
+#line 49 "lex.flex"
 { 	printf("+\n"); return '+'; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "lex.flex"
+#line 50 "lex.flex"
 { 	return '-'; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 36 "lex.flex"
+#line 51 "lex.flex"
 {	return '%'; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 37 "lex.flex"
+#line 52 "lex.flex"
 { 	return '*'; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 38 "lex.flex"
+#line 53 "lex.flex"
 { 	return '/'; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 39 "lex.flex"
+#line 54 "lex.flex"
 {	return EQUAL;	}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 40 "lex.flex"
+#line 55 "lex.flex"
 {	return ASSIGN;	}	
 	YY_BREAK
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 41 "lex.flex"
+#line 56 "lex.flex"
 {	return END; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 42 "lex.flex"
+#line 57 "lex.flex"
 {	return '('; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 43 "lex.flex"
+#line 58 "lex.flex"
 {	return	')'; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 44 "lex.flex"
+#line 59 "lex.flex"
 {	return ';'; 	}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 45 "lex.flex"
-{	comment(); 		}
+#line 60 "lex.flex"
+{	//comment(); 		}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 46 "lex.flex"
+#line 61 "lex.flex"
 {	return '{';	}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 47 "lex.flex"
+#line 62 "lex.flex"
 {	return '}';		}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 48 "lex.flex"
+#line 63 "lex.flex"
 ;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 49 "lex.flex"
+#line 64 "lex.flex"
 {	return ERROR;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 50 "lex.flex"
+#line 65 "lex.flex"
 ECHO;
 	YY_BREAK
-#line 919 "lex.yy.c"
+#line 934 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1913,30 +1928,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 50 "lex.flex"
-
-
-
-void yyerror ( char * str ) { 
-	printf (" ERROR : Could not parse !%s\n",str );
-}
-
-int yywrap ( void ) { }
-
-
-comment()
-{
-	char c, c1;
-
-loop:
-	while ((c = input()) != '\\' && c != 0);
-
-	if ((c1 = input()) != 'n' && c != 0)
-	{
-		goto loop;
-	}
-
-}
+#line 65 "lex.flex"
 
 
 

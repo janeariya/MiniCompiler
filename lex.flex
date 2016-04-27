@@ -1,8 +1,23 @@
 %{
 #include "parse.tab.h"
-#include <string.h>
-void yyerror ( char *); 
-int yyparse ( void ); 
+#include <cstdio>
+#include <iostream>
+#define YY_DECL extern "C" int yylex()
+using namespace std;
+
+/*comment(void)
+{
+	char c, c1;
+
+loop:
+	while ((c = yyinput()) != '\\' && c != 0);
+
+	if ((c1 = yyinput()) != 'n' && c != 0)
+	{
+		goto loop;
+	}
+
+}*/
 %}
 
 %%
@@ -42,32 +57,9 @@ $[a-z]													{
 "("														{	return '('; }
 ")"														{	return	')'; }
 ";"														{	return ';'; 	}
-"#"														{	comment(); 		}
+"#"														{	//comment(); 		}
 "{"														{	return '{';	}
 "}"														{	return '}';		}
 [ \t ' ' ]+ ;
 . 														{	return ERROR;}
 %%
-
-void yyerror ( char * str ) { 
-	printf (" ERROR : Could not parse !%s\n",str );
-}
-
-int yywrap ( void ) { }
-
-
-comment()
-{
-	char c, c1;
-
-loop:
-	while ((c = input()) != '\\' && c != 0);
-
-	if ((c1 = input()) != 'n' && c != 0)
-	{
-		goto loop;
-	}
-
-}
-
-
