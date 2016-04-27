@@ -64,9 +64,13 @@ if 		:
 	 												enQ(&head_codeQ,&tail_codeQ,asif(icount++));
 	 											}
 		;
-
+conloop	:
+			NUM TO NUM							{}
+		;
 loop 	: 
-			LOOP NUM TO NUM '{' stas '}' 		{}	
+			LOOP conloop '{' stas '}' 			{
+													en
+												}	
 		;
 
 exp		: 
