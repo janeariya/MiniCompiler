@@ -161,3 +161,23 @@ var 	:
 												}   
 		;     
 %%
+
+int main() {
+  	while(yyparse());
+	
+	File* ass;
+	ass.open ("As.s");
+	fprintf(head());
+	while(!isEmpty(head_initQ)){
+		 fprintf(head_initQ->ass);
+		 deQ(&head_initQ,&tail_initQ);
+	}
+	while(!isEmpty(head_codeQ)){
+		 fprintf(head_codeQ->ass);
+		 deQ(&head_codeQ,&tail_codeQ);
+	}
+	fprintf(foot());
+	ass.close();
+  	
+  	return 0;
+}
