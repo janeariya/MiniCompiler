@@ -9,5 +9,5 @@ typedef struct node {
 
 struct node* getNewnode (char* ass);
 int isEmpty(node *node);
-void enQ (node** tail,char* ass);
+void enQ (node** head,node** tail,char* ass);
 char* deQ (node** head,node** tail);
