@@ -3,14 +3,16 @@
 #include <conio.h>
 #include <stdlib.h>
 
-char* init_var(char* taroffset);
-char* assign(char* opOffset,char* taroffset);
-char* constn(char* val);
-char* add(char* operandleft,char* operandright);
-char* sub(char* operandleft,char* operandright);
-char* mul(char* operandleft,char* operandright);
-char* div(char* operandleft,char* operandright);
-char* mod(char* operandleft,char* operandright);
-char* show(char* opOffset);
+char* init_var(int taroffset);
+char* assign(int opOffset,int taroffset);
+char* constn(int val);
+char* add(int operandleft,int operandright);
+char* sub(int operandleft,int operandright);
+char* mul(int operandleft,int operandright);
+char* div(int operandleft,int operandright);
+char* mod(int operandleft,int operandright);
+char* show(int opOffset);
+char* asif(int icount);
+char* asloophead(int lcount);
 char* head();
 char* foot();

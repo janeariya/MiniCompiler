@@ -52,13 +52,13 @@ char* add(int operandleft,int operandright){
 char* sub(int operandleft,int operandright){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//no operand passed means get it from stack
-	if(operandright == NULL){
+	if(operandright == -1){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
 		sprintf(asscode,"\tmov -%d(%rbp), %rbx\n",operandright);
 	}
-	if(operandleft == NULL){
+	if(operandleft == -1){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
@@ -73,13 +73,13 @@ char* sub(int operandleft,int operandright){
 char* mul(int operandleft,int operandright){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//no operand passed means get it from stack
-	if(operandright == NULL){
+	if(operandright == -1){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
 		sprintf(asscode,"\tmov -%d(%rbp), %rbx\n",operandright);
 	}
-	if(operandleft == NULL){
+	if(operandleft == -1){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
@@ -94,13 +94,13 @@ char* mul(int operandleft,int operandright){
 char* div(int operandleft,int operandright){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//no operand passed means get it from stack
-	if(operandright == NULL){
+	if(operandright == -1){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
 		sprintf(asscode,"\tmov -%d(%rbp), %rbx\n", operandright);
 	}
-	if(operandleft == NULL){
+	if(operandleft == -1){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
@@ -115,13 +115,13 @@ char* div(int operandleft,int operandright){
 char* mod(int operandleft,int operandright){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//no operand passed means get it from stack
-	if(operandright == NULL){
+	if(operandright == -1){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
 		sprintf(asscode,"\tmov -%d(%rbp), %rbx\n", operandright);
 	}
-	if(operandleft == NULL){
+	if(operandleft == -1){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
@@ -143,6 +143,7 @@ char* asif(int icount){
 char* asloophead(int lcount){
 	char* asscode = (char*)malloc(sizeof(char*));
 	sprintf(asscode,"LOOP%d :\n",lcount);
+	sprintf(asscode,)
 
 	return asscode;	
 }
