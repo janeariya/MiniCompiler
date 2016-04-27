@@ -67,8 +67,8 @@ loop 	:
 
 exp		: 
 			NUM									{ 	struct node_q* const = init(-1,$1,NULL,NULL);
-													enQ(constn($1));
-													push(const);
+													enQ(&head_codeQ,&tail_codeQ,constn($1));
+													push(&top,const);
 												}
 		| 	ID   								{	}
 		| 	exp '-' exp							{}
@@ -89,10 +89,10 @@ cond 	:
 var 	: 
 			ID 									{	struct node_q* var = init($1,-1,NULL,NULL);
 													if(isReginit[$1] == 0){
-														enQ(init_var($1));
+														enQ(&head_initQ,&tail_initQ,init_var($1));
 														isReginit[$1] = 1;
 													}
-													push(var);
+													push(&top,var);
 												}   
 		;     
 %%
