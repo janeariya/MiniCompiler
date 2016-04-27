@@ -11,6 +11,8 @@ extern void yyerror ( char *);
 byte isReginit[] = {0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0};
+int lcount = 0;
+int icount = 0;
 
 node_q* head_initQ = NULL;
 node_q* tail_initQ = NULL;
@@ -58,15 +60,17 @@ sta 	:
 		;
 
 if 		:
-	 		IF '(' cond ')' '{' stas '}'		{}
+	 		IF '(' cond ')' '{' stas '}'		{ 
+	 												enQ(&head_codeQ,&tail_codeQ,asif(icount++));
+	 											}
 		;
 
 loop 	: 
-			LOOP var ':' INT TO INT '{' stas '}' {}	
+			LOOP NUM TO NUM '{' stas '}' 		{}	
 		;
 
 exp		: 
-			NUM									{ 	struct node_q* const = init(-1,$1,NULL,NULL);
+			NUM									{ 	node_q* const = init(-1,$1,NULL,NULL);
 													enQ(&head_codeQ,&tail_codeQ,constn($1));
 													push(&top,const);
 												}
@@ -87,7 +91,7 @@ cond 	:
 		;
 
 var 	: 
-			ID 									{	struct node_q* var = init($1,-1,NULL,NULL);
+			ID 									{	node_q* var = init($1,-1,NULL,NULL);
 													if(isReginit[$1] == 0){
 														enQ(&head_initQ,&tail_initQ,init_var($1));
 														isReginit[$1] = 1;
