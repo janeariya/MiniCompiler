@@ -16,7 +16,7 @@ char* assign(char* opOffset,char* taroffset){
 	}
 	//if go else means $a = var (op is var address )
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp),%s(%rbp)\n",opOffset,taroffset);
+		sprintf(asscode,"\tmov -%s(%rbp),-%s(%rbp)\n",opOffset,taroffset);
 	}
 	return asscode;
 }
@@ -91,6 +91,56 @@ char* mul(char* operandleft,char* operandright){
 	return asscode;
 }
 
+char* show(char* opOffset){
+	char* asscode = (char*)malloc(sizeof(char*));
+	//save val to stack before call function
+	sprintf(asscode,"\tpush %rax\n"); 
+	sprintf(asscode,"\tpush %rbx\n");
+	sprintf(asscode,"\tpush %rcx\n");
+	sprintf(asscode,"\tpush %rdx\n");
+	sprintf(asscode,"\tpush %rdi\n");
+	sprintf(asscode,"\tpush %rsi\n");
+	sprintf(asscode,"\tpush %rbp\n");
+	// put string to print
+	sprintf(asscode,"\tmov $show, %rdi\n");
+	// put format
+	if(opOffset == '-1'){
+		sprintf(asscode,"\tpop %rsi\n");
+	}
+	else{
+		sprintf(asscode,"\tmov -%s(%rbp),%rsi\n",opOffset);
+	}
+	// set rax = 0
+	sprintf(asscode,"\txor %rax, %rax\n");
+	// call printf
+	sprintf(asscode,"\tcall printf\n");
+
+	// return val to reg back to main
+	sprintf(asscode,"\tpop %rax\n");
+	sprintf(asscode,"\tpop %rbx\n");
+	sprintf(asscode,"\tpop %rcx\n");
+	sprintf(asscode,"\tpop %rdx\n");
+	sprintf(asscode,"\tpop %rdi\n");
+	sprintf(asscode,"\tpop %rsi\n");
+	sprintf(asscode,"\tpop %rbp\n");	
+
+	return asscode;
+}
+char* head(){
+	char* asscode = (char*)malloc(sizeof(char*));
+	sprintf(asscode,"\t.global main\n");
+	sprintf(asscode,"\t.text\n");
+	sprintf(asscode,"main:\tmov %rsp,%rbp\n");
+	sprintf(asscode,"\tsub $208,%rsp\n");
+	return asscode;
+}
+char* foot(){
+	char* asscode = (char*)malloc(sizeof(char*));
+	sprintf(asscode,"\tadd $208, %rsp\n");
+	sprintf(asscode,"\tret\n");
+	sprintf(asscode,"show:\t,asciz \" %d \\n\" \n");
+	return asscode;
+}
 /*int fileGen(node* q){
 	FILE * fp;
 	fp = fopen ("asm.s", "w+");
