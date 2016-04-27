@@ -11,6 +11,8 @@ extern void yyerror ( char *);
 byte isReginit[] = {0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0};
+int lcount = 0;
+int icount = 0;
 
 node_q* head_initQ = NULL;
 node_q* tail_initQ = NULL;
@@ -67,11 +69,17 @@ sta 	:
 		;
 
 if 		:
-	 		IF '(' cond ')' '{' stas '}'		{}
+	 		IF '(' cond ')' '{' stas '}'		{ 
+	 												enQ(&head_codeQ,&tail_codeQ,asif(icount++));
+	 											}
 		;
-
+conloop	:
+			NUM TO NUM							{}
+		;
 loop 	: 
-			LOOP var ':' NUM TO NUM '{' stas '}' {}	
+			LOOP conloop '{' stas '}' 			{
+													en
+												}	
 		;
 
 exp		: 
