@@ -1,7 +1,6 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "ast.h"
 #include "asmGenerator.h"
 #include "stack.h"
 #include "queue.h"
@@ -70,7 +69,7 @@ sta 	:
 
 if 		:
 	 		IF '(' cond ')' '{' stas '}'		{ 
-	 												enQ(&head_codeQ,&tail_codeQ,asif(icount++));
+	 												enQ(&head_codeQ,&tail_codeQ,asif(icount));
 	 											}
 		;
 conloop	:
@@ -145,7 +144,11 @@ cond 	:
 													enQ(&head_codeQ,&tail_codeQ,constn($1));
 													push(&top,const);
 												}
-		| 	exp EQUAL exp 						{}
+		| 	exp EQUAL exp 						{	
+													node_ast* right = pop(&tail);
+													node_ast* left = pop(&tail);
+													enQ(&head_code,&tail_code,condition(left->address,right->address,icount++));
+												}
 		;
 
 var 	: 
