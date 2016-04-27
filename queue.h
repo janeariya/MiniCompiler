@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
+
+typedef struct node {
+	char* ass;
+	struct node* next;
+} node;
 
 struct node* getNewnode (char* ass);
-int isEmpty(node* q);
-void enQ (node** q,char* ass);
-char* deQ (node** q);
-char* getHead (void);
+int isEmpty(node *node);
+void enQ (node** tail,char* ass);
+char* deQ (node** head,node** tail);
