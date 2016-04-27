@@ -9,3 +9,8 @@ char* constn(char* val);
 char* add(char* operandleft,char* operandright);
 char* sub(char* operandleft,char* operandright);
 char* mul(char* operandleft,char* operandright);
+char* div(char* operandleft,char* operandright);
+char* mod(char* operandleft,char* operandright);
+char* show(char* opOffset);
+char* head();
+char* foot();
