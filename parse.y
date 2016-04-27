@@ -42,7 +42,7 @@ stas 	:
 sta 	:
 			SHOW exp 							{}
 		| 	SHOW STRING 						{}
-		| 	var ASSIGN exp						{	}
+		| 	var ASSIGN exp						{}
 		;
 
 if 		:

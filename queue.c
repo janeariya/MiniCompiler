@@ -1,12 +1,5 @@
 #include "queue.h"
 
-typedef struct node {
-	char* ass;
-	struct node* next;
-}node;
-
-//node* head = NULL;
-//node* tail = NULL;
 
 node* getNewnode (char* ass){
 	
@@ -16,45 +9,38 @@ node* getNewnode (char* ass){
     return newNode;
 }
 
-void enQ (node** q,char* ass){
+void enQ (node** head,node** tail,char* ass){
       
 	node* newNode = getNewnode(ass);
-    if(isEmpty(*q))
-        *q = newNode;
+    if(isEmpty(*head))
+        *head = newNode;
     else
-	    (*q)->next = newNode;
-	//tail = newNode;
+	    (*tail)->next = newNode;
+	*tail = newNode;
 	
 }
-char* deQ (node** q){
+char* deQ (node** head,node** tail){
     
     char* ass;
     node* temp;
-    
-    if(!isEmpty(*q)){
+
+    if(!isEmpty(*head)){
     	
-        ass = (*q)->ass;
-        temp = *q;
-        //if(head == tail)
-        //    tail == NULL;
-        (*q) = (*q)->next;
+        ass = (*head)->ass;
+        temp = *head;
+        if(*head == *tail)
+            *tail == NULL;
+        (*head) = (*head)->next;
         free(temp);
         
         return ass;
     }
     return NULL;
 }
-/*char* getHead (){
-    
-    if(!isEmpty())
-        return head->ass;
-    return NULL;
-    
-}*/
 
-int isEmpty(node *q){
+int isEmpty(node* node){
     
-    if(q!=NULL)
+    if(node!=NULL)
         return 0;
     else
         return 1;
