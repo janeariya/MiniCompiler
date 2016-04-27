@@ -217,13 +217,3 @@ char* foot(){
 	sprintf(asscode,"show:\t,asciz \" %d \\n\" \n");
 	return asscode;
 }
-/*int fileGen(node* q){
-	FILE * fp;
-	fp = fopen ("asm.s", "w+");
-	while(){
-		fprintf(fp, "%s",);
-	}
-
-	fclose(fp);
-	return(0);
-}*/
