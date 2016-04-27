@@ -147,6 +147,11 @@ char* asloophead(int lcount){
 
 	return asscode;	
 }
+
+char* condition(){
+
+}
+
 char* show(int opOffset){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//save val to stack before call function
