@@ -13,6 +13,7 @@ char* div(int operandleft,int operandright);
 char* mod(int operandleft,int operandright);
 char* show(int opOffset);
 char* asif(int icount);
+char* condition(int operandleft,int operandright,int icount);
 char* asloophead(int lcount);
 char* head();
 char* foot();

@@ -148,8 +148,24 @@ char* asloophead(int lcount){
 	return asscode;	
 }
 
-char* condition(){
+char* condition(int operandleft,int operandright,int icount){
+	char* asscode = (char*)malloc(sizeof(char*));
+	if(operandright == -1){
+		sprintf(asscode,"\tpop %rbx\n");
+	}
+	else{
+		sprintf(asscode,"\tmov -%d(%rbp), %rbx\n", operandright);
+	}
+	if(operandleft == -1){
+		sprintf(asscode,"\tpop %rax\n");
+	}
+	else{
+		sprintf(asscode,"\tmov -%d(%rbp), %rax\n", operandleft);
+	}
 
+	sprintf(asscode,"\tcmp %rax,%rbx\n");
+	sprintf(asscode,"\tjnz IF%d\n",icount);
+	return asscode;
 }
 
 char* show(int opOffset){
