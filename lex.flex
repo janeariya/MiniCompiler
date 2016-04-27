@@ -6,7 +6,6 @@ int yyparse ( void );
 %}
 
 %%
-int														{	return INT; }
 Show													{	return SHOW; }
 if														{	return IF;	}
 Loop													{	return LOOP;	}
@@ -16,8 +15,10 @@ $[a-z]													{
 															return ID;
 														}
 [0-9]+													{ 	
+															printf("%d\n",atoi(yytext));
 															yylval.dval = atoi(yytext); 
 															return NUM; 
+
 														}
 [0-1]([0-1])?([0-1])?([0-1])?b 							{	
 															char *end;
@@ -30,7 +31,7 @@ $[a-z]													{
 															yylval.dval = strtol(yytext,&endx,16);
 															return NUM;	
 														}
-"+"														{ 	return '+'; }
+"+"														{ 	printf("+\n"); return '+'; }
 "-"														{ 	return '-'; }
 "%"														{	return '%'; }
 "*"														{ 	return '*'; }
@@ -44,27 +45,16 @@ $[a-z]													{
 "#"														{	comment(); 		}
 "{"														{	return '{';	}
 "}"														{	return '}';		}
-L?\"(\\.|[^\\"])*\"										{	
-															char sub[128];
-															substring(yytext,sub,2,strlen(yytext)-2);
-															yylval.strval = sub;
-															return STRING; 
-														}
 [ \t ' ' ]+ ;
 . 														{	return ERROR;}
 %%
 
 void yyerror ( char * str ) { 
-	printf (" ERROR : Could not parse !\n" );
+	printf (" ERROR : Could not parse !%s\n",str );
 }
 
 int yywrap ( void ) { }
 
-int main ( void ) {
-			 printf("> "); 
-			yyparse ();
-
-}
 
 comment()
 {
@@ -80,12 +70,4 @@ loop:
 
 }
 
-void substring(char s[], char sub[], int p, int l) {
-   int c = 0;
- 
-   while (c < l) {
-      sub[c] = s[p+c-1];
-      c++;
-   }
-   sub[c] = '\0';
-}
+

@@ -6,7 +6,7 @@
 #include "queue.h"
 extern int yylex ();
 extern void yyerror ( char *);
-
+extern int yyparse();
 int isReginit[] = {0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0};
@@ -23,7 +23,7 @@ stack* top = NULL;
 
 
 %}
-
+%define debug
 %union{
 	int dval;
 	char *strval;
@@ -43,17 +43,18 @@ stack* top = NULL;
 %start result
 %%
 result 	:
-			stas END result	 							
-		| 	if END result 						
-		| 	loop END result 
-		|										
+		|	 stas END result {printf("hi");}							
+		| 	if END result 	{printf("hi2");}					
+		| 	loop END result  {printf("hi3");}									
 		;
 
 stas 	: 
-		| 	sta stas
+		| 	 sta stas
+		;
 
 sta 	:
 			SHOW exp 							{
+													printf("sta");
 													node_ast* nexp = pop(&top);
 													enQ(&head_codeQ,&tail_codeQ,show(nexp->address));
 												}
@@ -61,6 +62,7 @@ sta 	:
 															
 												}
 		| 	var ASSIGN exp						{
+													printf("sta2");
 													node_ast* nexp = pop(&top);
 													node_ast* nvar = pop(&top);
 													enQ(&head_codeQ,&tail_codeQ,assign(nexp->address,nvar->address));
@@ -69,6 +71,7 @@ sta 	:
 
 if 		:
 	 		IF '(' cond ')' '{' stas '}'		{ 
+	 												printf("if");
 	 												enQ(&head_codeQ,&tail_codeQ,asif(icount));
 	 											}
 		;
@@ -82,11 +85,15 @@ loop 	:
 		;
 
 exp		: 
-			NUM									{ 	node_ast* nconst = init(-1,$1,NULL,NULL);
+			NUM									{ 	
+													printf("x1");
+													node_ast* nconst = init(-1,$1,NULL,NULL);
 													enQ(&head_codeQ,&tail_codeQ,constn($1));
 													push(&top,nconst);
 												}
-		| 	ID   								{	node_ast* var = init($1,-1,NULL,NULL);
+		| 	ID   								{	
+																	printf("x2");
+													node_ast* var = init($1,-1,NULL,NULL);
 													if(isReginit[$1] == 0){
 														enQ(&head_initQ,&tail_initQ,init_var($1));
 														isReginit[$1] = 1;
@@ -94,6 +101,7 @@ exp		:
 													push(&top,var);
 												}
 		| 	exp '-' exp							{	
+															printf("x3");
 													node_ast* right = pop(&top);
 													node_ast* left = pop(&top);
 													node_ast* subn = init(-1,-1,left,right);
@@ -102,6 +110,7 @@ exp		:
 												}
 
 		| 	exp '+' exp 						{
+															printf("x4");
 													node_ast* right = pop(&top);
 													node_ast* left = pop(&top);
 													node_ast* addn = init(-1,-1,left,right);
@@ -109,19 +118,23 @@ exp		:
 													enQ(&head_codeQ,&tail_codeQ,add(left->address,right->address));
 												}
 		| 	exp '*' exp 						{
+															printf("x5");
 													node_ast* right = pop(&top);
 													node_ast* left = pop(&top);
 													node_ast* muln = init(-1,-1,left,right);
 													push(&top,muln);
 													enQ(&head_codeQ,&tail_codeQ,mul(left->address,right->address));
 												}
-		| 	exp '/' exp							{	node_ast* right = pop(&top);
+		| 	exp '/' exp							{	
+															printf("x6");
+		node_ast* right = pop(&top);
 													node_ast* left = pop(&top);
 													node_ast* divn = init(-1,-1,left,right);
 													push(&top,divn);
 													enQ(&head_codeQ,&tail_codeQ,divide(left->address,right->address));
 												}
 		| 	exp '%' exp							{
+															printf("x7");
 													node_ast* right = pop(&top);
 													node_ast* left = pop(&top);
 													node_ast* modn = init(-1,-1,left,right);
@@ -129,22 +142,27 @@ exp		:
 													enQ(&head_codeQ,&tail_codeQ,mod(left->address,right->address));	
 												}
 		| 	'-' exp								{
-
+													printf("x8");
 													node_ast* num = pop(&top);
 													num->val = num->val*-1;
 													push(&top,num);
 													deQ(&head_codeQ,&tail_codeQ);
 													enQ(&head_codeQ,&tail_codeQ,constn(num->val));
 												}
-		| 	'(' exp ')'							{	$$ = $2;}
+		| 	'(' exp ')'							{	
+															printf("x9");
+													$$ = $2;}
 		;
 
 cond 	: 
-			NUM									{	node_ast* nconst = init(-1,$1,NULL,NULL);
+			NUM									{	
+																printf("con1");
+			node_ast* nconst = init(-1,$1,NULL,NULL);
 													enQ(&head_codeQ,&tail_codeQ,constn($1));
 													push(&top,nconst);
 												}
 		| 	exp EQUAL exp 						{	
+																		printf("con2");
 													node_ast* right = pop(&top);
 													node_ast* left = pop(&top);
 													enQ(&head_codeQ,&tail_codeQ,condition(left->address,right->address,icount++));
@@ -152,7 +170,9 @@ cond 	:
 		;
 
 var 	: 
-			ID 									{	node_ast* var = init($1,-1,NULL,NULL);
+			ID 									{	
+																printf("var");
+			node_ast* var = init($1,-1,NULL,NULL);
 													if(isReginit[$1] == 0){
 														enQ(&head_initQ,&tail_initQ,init_var($1));
 														isReginit[$1] = 1;
@@ -165,19 +185,19 @@ var 	:
 int main() {
   	while(yyparse());
 	
-	File* ass;
-	ass.open ("As.s");
-	fprintf(head());
+	FILE* ass;
+	ass = fopen("/As.s","w+");
+	fprintf(ass,head());
 	while(!isEmpty(head_initQ)){
-		 fprintf(head_initQ->ass);
+		 fprintf(ass,head_initQ->ass);
 		 deQ(&head_initQ,&tail_initQ);
 	}
 	while(!isEmpty(head_codeQ)){
-		 fprintf(head_codeQ->ass);
+		 fprintf(ass,head_codeQ->ass);
 		 deQ(&head_codeQ,&tail_codeQ);
 	}
-	fprintf(foot());
-	ass.close();
+	fprintf(ass,foot());
+	fclose(ass);
   	
   	return 0;
 }
