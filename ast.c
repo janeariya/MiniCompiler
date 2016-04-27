@@ -10,7 +10,7 @@ struct node* init(int var_name,int val,struct node* left,struct node* right){
 		node->address = -1;
 	}
 	else{
-		node->address = val*8;
+		node->address = (var_name+1)*8;
 	}
 	return node;
 }
