@@ -15,12 +15,6 @@ $[a-z]													{
 															yylval.chval = (char)yytext[1]-'a';
 															return ID;
 														}
-$[a-z][a-zA-Z0-9]+|	$[A-Z0-9]?							{
-															printf("Wrong variable name %s\n",yytext);
-	
-														}
-
-
 [0-9]+													{ 	
 															yylval.dval = atoi(yytext); 
 															return NUM; 

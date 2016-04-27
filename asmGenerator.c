@@ -10,7 +10,7 @@ char* init_var(int taroffset) {
 char* assign(int opOffset,int taroffset){
 	char* asscode = (char *)malloc(sizeof(char*));
 	//if op == '' means $a = add, sub, mul, div, mod, const
-	if(opOffset == '-1'){
+	if(opOffset == -1){
 		sprintf(asscode,"\tpop %rax\n");
 		sprintf(asscode,"\tmov %rax,-%d(%rbp)\n",taroffset);
 	}
@@ -31,13 +31,13 @@ char* constn(int val){
 char* add(int operandleft,int operandright){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//no operand passed means get it from stack
-	if(operandright == NULL){
+	if(operandright == -1){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
 		sprintf(asscode,"\tmov -%d(%rbp), %rbx\n",operandright);
 	}
-	if(operandleft == NULL){
+	if(operandleft == -1){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
@@ -91,7 +91,7 @@ char* mul(int operandleft,int operandright){
 	return asscode;
 }
 
-char* div(int operandleft,int operandright){
+char* divide(int operandleft,int operandright){
 	char* asscode = (char*)malloc(sizeof(char*));
 	//no operand passed means get it from stack
 	if(operandright == -1){
@@ -143,7 +143,7 @@ char* asif(int icount){
 char* asloophead(int lcount){
 	char* asscode = (char*)malloc(sizeof(char*));
 	sprintf(asscode,"LOOP%d :\n",lcount);
-	sprintf(asscode,)
+	//sprintf(asscode,);
 
 	return asscode;	
 }
@@ -162,7 +162,6 @@ char* condition(int operandleft,int operandright,int icount){
 	else{
 		sprintf(asscode,"\tmov -%d(%rbp), %rax\n", operandleft);
 	}
-
 	sprintf(asscode,"\tcmp %rax,%rbx\n");
 	sprintf(asscode,"\tjnz IF%d\n",icount);
 	return asscode;
@@ -181,7 +180,7 @@ char* show(int opOffset){
 	// put string to print
 	sprintf(asscode,"\tmov $show, %rdi\n");
 	// put format
-	if(opOffset == '-1'){
+	if(opOffset == -1){
 		sprintf(asscode,"\tpop %rsi\n");
 	}
 	else{
