@@ -7,7 +7,7 @@
 extern int yylex ();
 extern void yyerror ( char *);
 
-byte isReginit[] = {0,0,0,0,0,0,0,0,0,0,
+int isReginit[] = {0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0};
 int lcount = 0;
