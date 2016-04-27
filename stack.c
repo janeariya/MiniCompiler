@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "ast.h"
-
-typedef struct stack
-{
-	struct node_ast* node;
-	struct stack* next;
-	
-}stack;
+#include "stack.h"
 
 stack* getNewstack (struct node_ast* node){
 	
@@ -63,15 +54,3 @@ struct node_ast* initi(int var_name,int val,struct node_ast* left,struct node_as
 	return node;
 }
 
-int main(){
-	
-	stack* top=NULL;
-	struct node_ast* node = initi(1,5,NULL,NULL);
-	struct node_ast* node2 = initi(2,5,NULL,NULL);
-	push(&top,node);
-	push(&top,node2);
-	printf("%d\n",(pop(&top))->var_name);
-	printf("%d\n",(pop(&top))->var_name);
-	printf("%s\n",(pop(&top)));
-	return 0;
-}
