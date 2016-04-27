@@ -55,7 +55,7 @@ stas 	:
 sta 	:
 			SHOW exp 							{
 													node_ast* nexp = pop(&top);
-													enQ(&head_codeQ,&tail,show(nexp->address));
+													enQ(&head_codeQ,&tail_codeQ,show(nexp->address));
 												}
 		| 	SHOW STRING 						{
 															
@@ -63,7 +63,7 @@ sta 	:
 		| 	var ASSIGN exp						{
 													node_ast* nexp = pop(&top);
 													node_ast* nvar = pop(&top);
-													enQ(&head_codeQ,&tail,assign(nexp->address,nvar->address));
+													enQ(&head_codeQ,&tail_codeQ,assign(nexp->address,nvar->address));
 												}
 		;
 
@@ -77,14 +77,14 @@ conloop	:
 		;
 loop 	: 
 			LOOP conloop '{' stas '}' 			{
-													en
+													
 												}	
 		;
 
 exp		: 
-			NUM									{ 	node_ast* const = init(-1,$1,NULL,NULL);
+			NUM									{ 	node_ast* nconst = init(-1,$1,NULL,NULL);
 													enQ(&head_codeQ,&tail_codeQ,constn($1));
-													push(&top,const);
+													push(&top,nconst);
 												}
 		| 	ID   								{	node_ast* var = init($1,-1,NULL,NULL);
 													if(isReginit[$1] == 0){
@@ -94,60 +94,60 @@ exp		:
 													push(&top,var);
 												}
 		| 	exp '-' exp							{	
-													node_ast* right = pop(&tail);
-													node_ast* left = pop(&tail);
-													node_ast* sub = init(-1,-1,left,right);
-													push(&tail,sub);
+													node_ast* right = pop(&top);
+													node_ast* left = pop(&top);
+													node_ast* subn = init(-1,-1,left,right);
+													push(&top,subn);
 													enQ(&head_codeQ,&tail_codeQ,sub(left->address,right->address));
 												}
 
 		| 	exp '+' exp 						{
-													node_ast* right = pop(&tail);
-													node_ast* left = pop(&tail);
-													node_ast* add = init(-1,-1,left,right);
-													push(&tail,add);
+													node_ast* right = pop(&top);
+													node_ast* left = pop(&top);
+													node_ast* addn = init(-1,-1,left,right);
+													push(&top,addn);
 													enQ(&head_codeQ,&tail_codeQ,add(left->address,right->address));
 												}
 		| 	exp '*' exp 						{
-													node_ast* right = pop(&tail);
-													node_ast* left = pop(&tail);
-													node_ast* mul = init(-1,-1,left,right);
-													push(&tail,mul);
+													node_ast* right = pop(&top);
+													node_ast* left = pop(&top);
+													node_ast* muln = init(-1,-1,left,right);
+													push(&top,muln);
 													enQ(&head_codeQ,&tail_codeQ,mul(left->address,right->address));
 												}
-		| 	exp '/' exp							{	node_ast* right = pop(&tail);
-													node_ast* left = pop(&tail);
-													node_ast* div = init(-1,-1,left,right);
-													push(&tail,div);
-													enQ(&head_codeQ,&tail_codeQ,div(left->address,right->address));
+		| 	exp '/' exp							{	node_ast* right = pop(&top);
+													node_ast* left = pop(&top);
+													node_ast* divn = init(-1,-1,left,right);
+													push(&top,divn);
+													enQ(&head_codeQ,&tail_codeQ,divide(left->address,right->address));
 												}
 		| 	exp '%' exp							{
-													node_ast* right = pop(&tail);
-													node_ast* left = pop(&tail);
-													node_ast* mov = init(-1,-1,left,right);
-													push(&tail,div);
-													enQ(&head_codeQ,&tail_codeQ,mov(left->address,right->address));	
+													node_ast* right = pop(&top);
+													node_ast* left = pop(&top);
+													node_ast* modn = init(-1,-1,left,right);
+													push(&top,modn);
+													enQ(&head_codeQ,&tail_codeQ,mod(left->address,right->address));	
 												}
 		| 	'-' exp								{
 
-													node_ast* num = pop(&tail);
+													node_ast* num = pop(&top);
 													num->val = num->val*-1;
-													push(&tail,num);
+													push(&top,num);
 													deQ(&head_codeQ,&tail_codeQ);
 													enQ(&head_codeQ,&tail_codeQ,constn(num->val));
 												}
-		| 	'(' exp ')'							{}
+		| 	'(' exp ')'							{	$$ = $2;}
 		;
 
 cond 	: 
-			NUM									{	node_ast* const = init(-1,$1,NULL,NULL);
+			NUM									{	node_ast* nconst = init(-1,$1,NULL,NULL);
 													enQ(&head_codeQ,&tail_codeQ,constn($1));
-													push(&top,const);
+													push(&top,nconst);
 												}
 		| 	exp EQUAL exp 						{	
-													node_ast* right = pop(&tail);
-													node_ast* left = pop(&tail);
-													enQ(&head_code,&tail_code,condition(left->address,right->address,icount++));
+													node_ast* right = pop(&top);
+													node_ast* left = pop(&top);
+													enQ(&head_codeQ,&tail_codeQ,condition(left->address,right->address,icount++));
 												}
 		;
 

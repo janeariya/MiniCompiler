@@ -4,7 +4,7 @@
 
 typedef struct node_q {
 	char* ass;
-	struct node* next;
+	struct node_q* next;
 } node_q;
 
 struct node_q* getNewnode_q (char* ass);

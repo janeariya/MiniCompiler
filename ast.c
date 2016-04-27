@@ -1,7 +1,7 @@
 #include "ast.h"
 
-struct node_ast* initi(int var_name,int val,struct node_ast* left,struct node_ast* right){
-	struct node_ast* node = (struct node_ast*)malloc(sizeof(struct node_ast*)) ;
+ node_ast* init(int var_name,int val,  node_ast* left,  node_ast* right){
+	  node_ast* node = (  node_ast*)malloc(sizeof(  node_ast*)) ;
 	node->var_name = var_name;
 	node->val = val;
 	node->node_left = left;

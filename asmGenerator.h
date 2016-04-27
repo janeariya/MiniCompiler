@@ -9,7 +9,7 @@ char* constn(int val);
 char* add(int operandleft,int operandright);
 char* sub(int operandleft,int operandright);
 char* mul(int operandleft,int operandright);
-char* div(int operandleft,int operandright);
+char* divide(int operandleft,int operandright);
 char* mod(int operandleft,int operandright);
 char* show(int opOffset);
 char* asif(int icount);
