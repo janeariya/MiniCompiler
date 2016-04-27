@@ -1,28 +1,28 @@
 #include "queue.h"
 
 
-node* getNewnode (char* ass){
+node_q* getNewnode_q (char* ass){
 	
-	node* newNode = (node*)malloc(sizeof(node*));
-	newNode->ass = ass;
-    newNode->next = NULL;
-    return newNode;
+	node_q* newnode_q = (node_q*)malloc(sizeof(node_q*));
+	newnode_q->ass = ass;
+    newnode_q->next = NULL;
+    return newnode_q;
 }
 
-void enQ (node** head,node** tail,char* ass){
+void enQ (node_q** head,node_q** tail,char* ass){
       
-	node* newNode = getNewnode(ass);
+	node_q* newnode_q = getNewnode_q(ass);
     if(isEmpty(*head))
-        *head = newNode;
+        *head = newnode_q;
     else
-	    (*tail)->next = newNode;
-	*tail = newNode;
+	    (*tail)->next = newnode_q;
+	*tail = newnode_q;
 	
 }
-char* deQ (node** head,node** tail){
+char* deQ (node_q** head,node_q** tail){
     
     char* ass;
-    node* temp;
+    node_q* temp;
 
     if(!isEmpty(*head)){
     	
@@ -38,9 +38,9 @@ char* deQ (node** head,node** tail){
     return NULL;
 }
 
-int isEmpty(node* node){
+int isEmpty(node_q* node_q){
     
-    if(node!=NULL)
+    if(node_q!=NULL)
         return 0;
     else
         return 1;
