@@ -54,7 +54,7 @@ loop 	:
 		;
 
 exp		: 
-			NUM									{ 	struct node* const = init(-1,$1,NULL,NULL);
+			NUM									{ 	struct node_q* const = init(-1,$1,NULL,NULL);
 													enQ(constn($1));
 													push(const);
 												}
@@ -74,7 +74,7 @@ cond 	:
 		;
 
 var 	: 
-			ID 									{	struct node* var = init($1,-1,NULL,NULL);
+			ID 									{	struct node_q* var = init($1,-1,NULL,NULL);
 													if(isReginit[$1] == 0){
 														enQ(init_var($1));
 														isReginit[$1] = 1;

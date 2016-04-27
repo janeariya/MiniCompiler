@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <conio.h>
 
-typedef struct node {
+typedef struct node_q {
 	char* ass;
 	struct node* next;
-} node;
+} node_q;
 
-struct node* getNewnode (char* ass);
-int isEmpty(node *node);
-void enQ (node** head,node** tail,char* ass);
-char* deQ (node** head,node** tail);
+struct node_q* getNewnode_q (char* ass);
+int isEmpty(node_q *node_q);
+void enQ (node_q** head,node_q** tail,char* ass);
+char* deQ (node_q** head,node_q** tail);
