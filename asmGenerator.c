@@ -35,13 +35,13 @@ char* add(char* operandleft,char* operandright){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n");
+		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n",operandright);
 	}
 	if(operandleft == NULL){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp), %rax\n");
+		sprintf(asscode,"\tmov -%s(%rbp), %rax\n",operandleft);
 	}
 
 	sprintf(asscode,"\tadd %rbx, %rax\n"); // %rax = %rax + %rbx
@@ -56,13 +56,13 @@ char* sub(char* operandleft,char* operandright){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n");
+		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n",operandright);
 	}
 	if(operandleft == NULL){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp), %rax\n");
+		sprintf(asscode,"\tmov -%s(%rbp), %rax\n",operandleft);
 	}
 
 	sprintf(asscode,"\tsub %rbx, %rax\n"); // %rax = %rax - %rbx
@@ -77,17 +77,60 @@ char* mul(char* operandleft,char* operandright){
 		sprintf(asscode,"\tpop %rbx\n");
 	}
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n");
+		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n",operandright);
 	}
 	if(operandleft == NULL){
 		sprintf(asscode,"\tpop %rax\n");
 	}
 	else{
-		sprintf(asscode,"\tmov -%s(%rbp), %rax\n");
+		sprintf(asscode,"\tmov -%s(%rbp), %rax\n",operandright);
 	}
 
 	sprintf(asscode,"\timul %rbx\n"); //%rax = %rax x %rbx ; imul is signed
 	sprintf(asscode,"\tpush %rax\n");
+	return asscode;
+}
+
+char* div(char* operandleft,char* operandright){
+	char* asscode = (char*)malloc(sizeof(char*));
+	//no operand passed means get it from stack
+	if(operandright == NULL){
+		sprintf(asscode,"\tpop %rbx\n");
+	}
+	else{
+		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n", operandright);
+	}
+	if(operandleft == NULL){
+		sprintf(asscode,"\tpop %rax\n");
+	}
+	else{
+		sprintf(asscode,"\tmov -%s(%rbp), %rax\n", operandleft);
+	}
+
+	sprintf(asscode,"\tidiv %rbx\n"); //%rax = %rax / %rbx ; idiv is signed
+	sprintf(asscode,"\tpush %rax\n");
+	return asscode;
+}
+
+char* mod(char* operandleft,char* operandright){
+	char* asscode = (char*)malloc(sizeof(char*));
+	//no operand passed means get it from stack
+	if(operandright == NULL){
+		sprintf(asscode,"\tpop %rbx\n");
+	}
+	else{
+		sprintf(asscode,"\tmov -%s(%rbp), %rbx\n", operandright);
+	}
+	if(operandleft == NULL){
+		sprintf(asscode,"\tpop %rax\n");
+	}
+	else{
+		sprintf(asscode,"\tmov -%s(%rbp), %rax\n", operandleft);
+	}
+
+	sprintf(asscode,"\txor %rdx, %rdx\n");
+	sprintf(asscode,"\tidiv %rbx\n"); //%rax = %rax / %rbx 
+	sprintf(asscode,"\tpush %rdx\n"); //%rdx = %rax % %rbx
 	return asscode;
 }
 
