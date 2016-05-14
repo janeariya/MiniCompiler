@@ -1,23 +1,10 @@
 %{
-#include "parse.tab.h"
-#include <cstdio>
-#include <iostream>
+
+#include <stdio.h>
+#include <stdlib.h>
+
 #define YY_DECL extern "C" int yylex()
-using namespace std;
-
-/*comment(void)
-{
-	char c, c1;
-
-loop:
-	while ((c = yyinput()) != '\\' && c != 0);
-
-	if ((c1 = yyinput()) != 'n' && c != 0)
-	{
-		goto loop;
-	}
-
-}*/
+enum {ID=300, NUM, SHOW, IF, LOOP,TO, EQUAL, ASSIGN, END, ERROR};
 %}
 
 %%
@@ -30,7 +17,6 @@ $[a-z]													{
 															return ID;
 														}
 [0-9]+													{ 	
-															printf("%d\n",atoi(yytext));
 															yylval.dval = atoi(yytext); 
 															return NUM; 
 
@@ -46,20 +32,20 @@ $[a-z]													{
 															yylval.dval = strtol(yytext,&endx,16);
 															return NUM;	
 														}
-"+"														{ 	printf("+\n"); return '+'; }
+"+"														{ 	return '+'; }
 "-"														{ 	return '-'; }
 "%"														{	return '%'; }
 "*"														{ 	return '*'; }
 "/"														{ 	return '/'; }
 "=="													{	return EQUAL;	}
 "="														{	return ASSIGN;	}	
-"\n"													{	return END; }
-"("														{	return '('; }
-")"														{	return	')'; }
+"\n"													{	return END; 	}
+"("														{	return '('; 	}
+")"														{	return	')'; 	}
 ";"														{	return ';'; 	}
-"#"														{	//comment(); 		}
-"{"														{	return '{';	}
+"#"														{	//comment(); 	}
+"{"														{	return '{';		}
 "}"														{	return '}';		}
 [ \t ' ' ]+ ;
-. 														{	return ERROR;}
+. 														{	return ERROR;	}
 %%

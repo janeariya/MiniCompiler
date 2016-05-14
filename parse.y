@@ -1,27 +1,31 @@
 %{
 //#include <stdio.h>
 //#include <stdlib.h>
-//#include "asmGenerator.h"
+#include <cstdio>
 #include <iostream>
 #include <queue>
 #include <stack>
 #include <string>
 #include "asmGenerator.cpp" 
+#include "ast.cpp"
 
 using namespace std;
 
 extern "C" int yylex();
 extern "C" int yyparse();
 extern "C" FILE *yyin;
+ 
+void yyerror(const char *s);
 
-int isReginit[] = {0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0};
+int isReginit[27] = {};
 int lcount = 0;
 int icount = 0;
-
+queue<string> bodycode;
+queue<string> initcode;
+stack<NodeAst*> nodes;
 
 %}
+
 %define parse.error verbose
 %union{
 	int dval;
@@ -40,6 +44,7 @@ int icount = 0;
 %type <dval> exp cond
 %type <chval> var
 %start result
+
 %%
 result 	:
 		|	result stas {cout<<"hi"<<endl;}							
@@ -55,28 +60,33 @@ stas 	:
 sta 	:
 			SHOW exp 							{
 													cout<<"sta"<<endl;
-													//node_ast* nexp = pop(&top);
-													//enQ(&head_codeQ,&tail_codeQ,show(nexp->address));
+													NodeAst* nodeExp = nodes.top();
+													nodes.pop();	
+													bodycode.push(show(nodeExp->getAddress()));
 												}
 		| 	SHOW STRING 						{
 															
 												}
 		| 	var ASSIGN exp						{
 													cout<<"sta2"<<endl;
-													//node_ast* nexp = pop(&top);
-													//node_ast* nvar = pop(&top);
-													//enQ(&head_codeQ,&tail_codeQ,assign(nexp->address,nvar->address));
+													NodeAst* nodeExp = nodes.top();
+													nodes.pop();
+													NodeAst* nodeVar = nodes.top();
+													nodes.pop();
+													bodycode.push(assign(nodeExp->getAddress(),nodeVar->getAddress()));
 												}
 		;
 
 if 		:
 	 		IF '(' cond ')' '{' stas '}'		{ 
 	 												cout<<"if"<<endl;
-	 												//enQ(&head_codeQ,&tail_codeQ,asif(icount));
+	 												bodycode.push(asif(icount));
 	 											}
 		;
 conloop	:
-			NUM TO NUM							{}
+			NUM TO NUM							{
+
+												}
 		;
 loop 	: 
 			LOOP conloop '{' stas '}' 			{
@@ -87,125 +97,122 @@ loop 	:
 exp		: 
 			NUM									{ 	
 													cout<<"x1"<<endl;
-													//node_ast* nconst = init(-1,$1,NULL,NULL);
-													cout<<constn($1);
-													//enQ(&head_codeQ,&tail_codeQ,constn($1));
-													//push(&top,nconst);
+													NodeAst* nconst = new NodeAst(-1,$1,'c',NULL,NULL);
+													bodycode.push(constn($1));
+													nodes.push(nconst);
 												}
 		| 	ID   								{	
-																	cout<<"x2"<<endl;
-													//node_ast* var = init($1,-1,NULL,NULL);
-													//if(isReginit[$1] == 0){
-													//	enQ(&head_initQ,&tail_initQ,init_var($1));
-													//	isReginit[$1] = 1;
-													//}
-													//push(&top,var);
+													cout<<"x2"<<endl;
+													NodeAst* var = new NodeAst($1,-1,'v',NULL,NULL);
+													if(isReginit[$1] == 0){
+														initcode.push(init_var($1));
+														isReginit[$1] = 1;
+													}
+													nodes.push(var);
 												}
 		| 	exp '-' exp							{	
-															cout<<"x3"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* subn = init(-1,-1,left,right);
-													//push(&top,subn);
-													//enQ(&head_codeQ,&tail_codeQ,sub(left->address,right->address));
+													cout<<"x3"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* subn = new NodeAst(-1,-1,'s',left,right);
+													nodes.push(subn);
+													bodycode.push(sub(left->getAddress(),right->getAddress()));
 												}
 
 		| 	exp '+' exp 						{
-															cout<<"x4"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* addn = init(-1,-1,left,right);
-													//push(&top,addn);
-													//enQ(&head_codeQ,&tail_codeQ,add(left->address,right->address));
+													cout<<"x4"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* addn = new NodeAst(-1,-1,'a',left,right);
+													nodes.push(addn);
+													bodycode.push(add(left->getAddress(),right->getAddress()));
 												}
 		| 	exp '*' exp 						{
-															cout<<"x5"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* muln = init(-1,-1,left,right);
-													//push(&top,muln);
-													//enQ(&head_codeQ,&tail_codeQ,mul(left->address,right->address));
+													cout<<"x5"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* muln = new NodeAst(-1,-1,'m',left,right);
+													nodes.push(muln);
+													bodycode.push(mul(left->getAddress(),right->getAddress()));
 												}
 		| 	exp '/' exp							{	
-															cout<<"x6"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* divn = init(-1,-1,left,right);
-													//push(&top,divn);
-													//enQ(&head_codeQ,&tail_codeQ,divide(left->address,right->address));
+													cout<<"x6"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* divn = new NodeAst(-1,-1,'d',left,right);
+													nodes.push(divn);
+													bodycode.push(divide(left->getAddress(),right->getAddress()));
 												}
 		| 	exp '%' exp							{
-															cout<<"x7"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* modn = init(-1,-1,left,right);
-													//push(&top,modn);
-													//enQ(&head_codeQ,&tail_codeQ,mod(left->address,right->address));	
+													cout<<"x7"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* modn = new NodeAst(-1,-1,'M',left,right);
+													nodes.push(modn);
+													bodycode.push(mod(left->getAddress(),right->getAddress()));	
 												}
 		| 	'-' exp								{
 													cout<<"x8"<<endl;
-													//node_ast* num = pop(&top);
-													//num->val = num->val*-1;
-													//push(&top,num);
+													NodeAst* num = nodes.top();
+													nodes.pop();
+													num->setVal(num->getVal()*-1);
+													nodes.push(num);
 													//deQ(&head_codeQ,&tail_codeQ);
-													//enQ(&head_codeQ,&tail_codeQ,constn(num->val));
+													bodycode.push(constn(num->getVal()));
 												}
 		| 	'(' exp ')'							{	
-															cout<<"x9"<<endl;
+													cout<<"x9"<<endl;
 													$$ = $2;}
 		;
 
 cond 	: 
 			NUM									{	
-																cout<<"con1"<<endl;
-													//node_ast* nconst = init(-1,$1,NULL,NULL);
-													//enQ(&head_codeQ,&tail_codeQ,constn($1));
-													//push(&top,nconst);
+													cout<<"con1"<<endl;
+													NodeAst* nconst = new NodeAst(-1,$1,'c',NULL,NULL);
+													bodycode.push(constn($1));
+													nodes.push(nconst);
 												}
 		| 	exp EQUAL exp 						{	
-																		cout<<"con2"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//enQ(&head_codeQ,&tail_codeQ,condition(left->address,right->address,icount++));
+													cout<<"con2"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													bodycode.push(condition(left->getAddress(),right->getAddress(),icount++));
 												}
 		;
 
 var 	: 
 			ID 									{	
-																cout<<"var"<<endl;
-													//node_ast* var = init($1,-1,NULL,NULL);
-													//if(isReginit[$1] == 0){
-													//	enQ(&head_initQ,&tail_initQ,init_var($1));
-													//	isReginit[$1] = 1;
-													//}
-													//push(&top,var);
+													cout<<"var"<<endl;
+													NodeAst* var = new NodeAst($1,-1,'v',NULL,NULL);
+													if(isReginit[$1] == 0){
+														initcode.push(init_var($1));
+														isReginit[$1] = 1;
+													}
+													nodes.push(var);
 												}   
 		;     
 %%
 
 
-void yyerror ( char * str ) { 
-	cout<< " ERROR : Could not parse !"<<str<<endl;
+void yyerror(const char *s) {
+	cout << "parse error!  Message: " << s << endl;
+	// might as well halt now:
+	//exit(-1);
 }
 
-int yywrap ( void ) { return 0; }
-
-int main() {
+int main(int,char**) {
   	yyparse();
-	
-/*	FILE* ass;
-	ass = fopen("/As.s","w+");
-	fcout<<ass,head());
-	while(!isEmpty(head_initQ)){
-		 fcout<<ass,head_initQ->ass);
-		 deQ(&head_initQ,&tail_initQ);
-	}
-	while(!isEmpty(head_codeQ)){
-		 fcout<<ass,head_codeQ->ass);
-		 deQ(&head_codeQ,&tail_codeQ);
-	}
-	fcout<<ass,foot());
-	fclose(ass); */
-  	
   	return 0;
 }

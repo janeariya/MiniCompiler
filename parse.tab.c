@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.2"
+#define YYBISON_VERSION "3.0.4"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -66,28 +66,31 @@
 
 //#include <stdio.h>
 //#include <stdlib.h>
-//#include "asmGenerator.h"
+#include <cstdio>
 #include <iostream>
 #include <queue>
 #include <stack>
 #include <string>
 #include "asmGenerator.cpp" 
+#include "ast.cpp"
 
 using namespace std;
 
 extern "C" int yylex();
 extern "C" int yyparse();
 extern "C" FILE *yyin;
+ 
+void yyerror(const char *s);
 
-int isReginit[] = {0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0};
+int isReginit[27] = {};
 int lcount = 0;
 int icount = 0;
+queue<string> bodycode;
+queue<string> initcode;
+stack<NodeAst*> nodes;
 
 
-
-#line 91 "parse.tab.c" /* yacc.c:339  */
+#line 94 "parse.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -139,17 +142,19 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
+
 union YYSTYPE
 {
-#line 26 "parse.y" /* yacc.c:355  */
+#line 30 "parse.y" /* yacc.c:355  */
 
 	int dval;
 	char *strval;
 	int chval;
 
-#line 152 "parse.tab.c" /* yacc.c:355  */
+#line 155 "parse.tab.c" /* yacc.c:355  */
 };
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -163,7 +168,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 167 "parse.tab.c" /* yacc.c:358  */
+#line 172 "parse.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -461,9 +466,9 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    44,    44,    45,    46,    47,    48,    51,    52,    56,
-      61,    64,    73,    79,    82,    88,    95,   104,   113,   121,
-     129,   137,   145,   153,   159,   165,   174
+       0,    49,    49,    50,    51,    52,    53,    56,    57,    61,
+      67,    70,    81,    87,    92,    98,   104,   113,   124,   134,
+     144,   154,   164,   173,   179,   185,   196
 };
 #endif
 
@@ -1266,225 +1271,242 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 45 "parse.y" /* yacc.c:1646  */
+#line 50 "parse.y" /* yacc.c:1646  */
     {cout<<"hi"<<endl;}
-#line 1272 "parse.tab.c" /* yacc.c:1646  */
+#line 1277 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 46 "parse.y" /* yacc.c:1646  */
+#line 51 "parse.y" /* yacc.c:1646  */
     {cout<<"hi2"<<endl;}
-#line 1278 "parse.tab.c" /* yacc.c:1646  */
+#line 1283 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 47 "parse.y" /* yacc.c:1646  */
+#line 52 "parse.y" /* yacc.c:1646  */
     {cout<<"hi3"<<endl;}
-#line 1284 "parse.tab.c" /* yacc.c:1646  */
+#line 1289 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 56 "parse.y" /* yacc.c:1646  */
+#line 61 "parse.y" /* yacc.c:1646  */
     {
 													cout<<"sta"<<endl;
-													//node_ast* nexp = pop(&top);
-													//enQ(&head_codeQ,&tail_codeQ,show(nexp->address));
+													NodeAst* nodeExp = nodes.top();
+													nodes.pop();	
+													bodycode.push(show(nodeExp->getAddress()));
 												}
-#line 1294 "parse.tab.c" /* yacc.c:1646  */
+#line 1300 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 61 "parse.y" /* yacc.c:1646  */
+#line 67 "parse.y" /* yacc.c:1646  */
     {
 															
 												}
-#line 1302 "parse.tab.c" /* yacc.c:1646  */
+#line 1308 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 64 "parse.y" /* yacc.c:1646  */
+#line 70 "parse.y" /* yacc.c:1646  */
     {
 													cout<<"sta2"<<endl;
-													//node_ast* nexp = pop(&top);
-													//node_ast* nvar = pop(&top);
-													//enQ(&head_codeQ,&tail_codeQ,assign(nexp->address,nvar->address));
+													NodeAst* nodeExp = nodes.top();
+													nodes.pop();
+													NodeAst* nodeVar = nodes.top();
+													nodes.pop();
+													bodycode.push(assign(nodeExp->getAddress(),nodeVar->getAddress()));
 												}
-#line 1313 "parse.tab.c" /* yacc.c:1646  */
+#line 1321 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 73 "parse.y" /* yacc.c:1646  */
+#line 81 "parse.y" /* yacc.c:1646  */
     { 
 	 												cout<<"if"<<endl;
-	 												//enQ(&head_codeQ,&tail_codeQ,asif(icount));
+	 												bodycode.push(asif(icount));
 	 											}
-#line 1322 "parse.tab.c" /* yacc.c:1646  */
+#line 1330 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 79 "parse.y" /* yacc.c:1646  */
-    {}
-#line 1328 "parse.tab.c" /* yacc.c:1646  */
+#line 87 "parse.y" /* yacc.c:1646  */
+    {
+
+												}
+#line 1338 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 82 "parse.y" /* yacc.c:1646  */
+#line 92 "parse.y" /* yacc.c:1646  */
     {
 													
 												}
-#line 1336 "parse.tab.c" /* yacc.c:1646  */
+#line 1346 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 88 "parse.y" /* yacc.c:1646  */
+#line 98 "parse.y" /* yacc.c:1646  */
     { 	
 													cout<<"x1"<<endl;
-													//node_ast* nconst = init(-1,$1,NULL,NULL);
-													cout<<constn((yyvsp[0].dval));
-													//enQ(&head_codeQ,&tail_codeQ,constn($1));
-													//push(&top,nconst);
+													NodeAst* nconst = new NodeAst(-1,(yyvsp[0].dval),'c',NULL,NULL);
+													bodycode.push(constn((yyvsp[0].dval)));
+													nodes.push(nconst);
 												}
-#line 1348 "parse.tab.c" /* yacc.c:1646  */
+#line 1357 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 95 "parse.y" /* yacc.c:1646  */
+#line 104 "parse.y" /* yacc.c:1646  */
     {	
-																	cout<<"x2"<<endl;
-													//node_ast* var = init($1,-1,NULL,NULL);
-													//if(isReginit[$1] == 0){
-													//	enQ(&head_initQ,&tail_initQ,init_var($1));
-													//	isReginit[$1] = 1;
-													//}
-													//push(&top,var);
+													cout<<"x2"<<endl;
+													NodeAst* var = new NodeAst((yyvsp[0].chval),-1,'v',NULL,NULL);
+													if(isReginit[(yyvsp[0].chval)] == 0){
+														initcode.push(init_var((yyvsp[0].chval)));
+														isReginit[(yyvsp[0].chval)] = 1;
+													}
+													nodes.push(var);
 												}
-#line 1362 "parse.tab.c" /* yacc.c:1646  */
+#line 1371 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 104 "parse.y" /* yacc.c:1646  */
+#line 113 "parse.y" /* yacc.c:1646  */
     {	
-															cout<<"x3"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* subn = init(-1,-1,left,right);
-													//push(&top,subn);
-													//enQ(&head_codeQ,&tail_codeQ,sub(left->address,right->address));
+													cout<<"x3"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* subn = new NodeAst(-1,-1,'s',left,right);
+													nodes.push(subn);
+													bodycode.push(sub(left->getAddress(),right->getAddress()));
 												}
-#line 1375 "parse.tab.c" /* yacc.c:1646  */
+#line 1386 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 113 "parse.y" /* yacc.c:1646  */
+#line 124 "parse.y" /* yacc.c:1646  */
     {
-															cout<<"x4"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* addn = init(-1,-1,left,right);
-													//push(&top,addn);
-													//enQ(&head_codeQ,&tail_codeQ,add(left->address,right->address));
-												}
-#line 1388 "parse.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 19:
-#line 121 "parse.y" /* yacc.c:1646  */
-    {
-															cout<<"x5"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* muln = init(-1,-1,left,right);
-													//push(&top,muln);
-													//enQ(&head_codeQ,&tail_codeQ,mul(left->address,right->address));
+													cout<<"x4"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* addn = new NodeAst(-1,-1,'a',left,right);
+													nodes.push(addn);
+													bodycode.push(add(left->getAddress(),right->getAddress()));
 												}
 #line 1401 "parse.tab.c" /* yacc.c:1646  */
     break;
 
-  case 20:
-#line 129 "parse.y" /* yacc.c:1646  */
-    {	
-															cout<<"x6"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* divn = init(-1,-1,left,right);
-													//push(&top,divn);
-													//enQ(&head_codeQ,&tail_codeQ,divide(left->address,right->address));
+  case 19:
+#line 134 "parse.y" /* yacc.c:1646  */
+    {
+													cout<<"x5"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* muln = new NodeAst(-1,-1,'m',left,right);
+													nodes.push(muln);
+													bodycode.push(mul(left->getAddress(),right->getAddress()));
 												}
-#line 1414 "parse.tab.c" /* yacc.c:1646  */
+#line 1416 "parse.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 20:
+#line 144 "parse.y" /* yacc.c:1646  */
+    {	
+													cout<<"x6"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* divn = new NodeAst(-1,-1,'d',left,right);
+													nodes.push(divn);
+													bodycode.push(divide(left->getAddress(),right->getAddress()));
+												}
+#line 1431 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 137 "parse.y" /* yacc.c:1646  */
+#line 154 "parse.y" /* yacc.c:1646  */
     {
-															cout<<"x7"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//node_ast* modn = init(-1,-1,left,right);
-													//push(&top,modn);
-													//enQ(&head_codeQ,&tail_codeQ,mod(left->address,right->address));	
+													cout<<"x7"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													NodeAst* modn = new NodeAst(-1,-1,'M',left,right);
+													nodes.push(modn);
+													bodycode.push(mod(left->getAddress(),right->getAddress()));	
 												}
-#line 1427 "parse.tab.c" /* yacc.c:1646  */
+#line 1446 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 145 "parse.y" /* yacc.c:1646  */
+#line 164 "parse.y" /* yacc.c:1646  */
     {
 													cout<<"x8"<<endl;
-													//node_ast* num = pop(&top);
-													//num->val = num->val*-1;
-													//push(&top,num);
+													NodeAst* num = nodes.top();
+													nodes.pop();
+													num->setVal(num->getVal()*-1);
+													nodes.push(num);
 													//deQ(&head_codeQ,&tail_codeQ);
-													//enQ(&head_codeQ,&tail_codeQ,constn(num->val));
+													bodycode.push(constn(num->getVal()));
 												}
-#line 1440 "parse.tab.c" /* yacc.c:1646  */
+#line 1460 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 153 "parse.y" /* yacc.c:1646  */
+#line 173 "parse.y" /* yacc.c:1646  */
     {	
-															cout<<"x9"<<endl;
+													cout<<"x9"<<endl;
 													(yyval.dval) = (yyvsp[-1].dval);}
-#line 1448 "parse.tab.c" /* yacc.c:1646  */
+#line 1468 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 159 "parse.y" /* yacc.c:1646  */
+#line 179 "parse.y" /* yacc.c:1646  */
     {	
-																cout<<"con1"<<endl;
-													//node_ast* nconst = init(-1,$1,NULL,NULL);
-													//enQ(&head_codeQ,&tail_codeQ,constn($1));
-													//push(&top,nconst);
+													cout<<"con1"<<endl;
+													NodeAst* nconst = new NodeAst(-1,(yyvsp[0].dval),'c',NULL,NULL);
+													bodycode.push(constn((yyvsp[0].dval)));
+													nodes.push(nconst);
 												}
-#line 1459 "parse.tab.c" /* yacc.c:1646  */
+#line 1479 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 165 "parse.y" /* yacc.c:1646  */
+#line 185 "parse.y" /* yacc.c:1646  */
     {	
-																		cout<<"con2"<<endl;
-													//node_ast* right = pop(&top);
-													//node_ast* left = pop(&top);
-													//enQ(&head_codeQ,&tail_codeQ,condition(left->address,right->address,icount++));
+													cout<<"con2"<<endl;
+													NodeAst* right = nodes.top();
+													nodes.pop();
+													NodeAst* left = nodes.top();
+													nodes.pop();
+													bodycode.push(condition(left->getAddress(),right->getAddress(),icount++));
 												}
-#line 1470 "parse.tab.c" /* yacc.c:1646  */
+#line 1492 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 174 "parse.y" /* yacc.c:1646  */
+#line 196 "parse.y" /* yacc.c:1646  */
     {	
-																cout<<"var"<<endl;
-													//node_ast* var = init($1,-1,NULL,NULL);
-													//if(isReginit[$1] == 0){
-													//	enQ(&head_initQ,&tail_initQ,init_var($1));
-													//	isReginit[$1] = 1;
-													//}
-													//push(&top,var);
+													cout<<"var"<<endl;
+													NodeAst* var = new NodeAst((yyvsp[0].chval),-1,'v',NULL,NULL);
+													if(isReginit[(yyvsp[0].chval)] == 0){
+														initcode.push(init_var((yyvsp[0].chval)));
+														isReginit[(yyvsp[0].chval)] = 1;
+													}
+													nodes.push(var);
 												}
-#line 1484 "parse.tab.c" /* yacc.c:1646  */
+#line 1506 "parse.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1488 "parse.tab.c" /* yacc.c:1646  */
+#line 1510 "parse.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1712,32 +1734,17 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 184 "parse.y" /* yacc.c:1906  */
+#line 206 "parse.y" /* yacc.c:1906  */
 
 
 
-void yyerror ( char * str ) { 
-	cout<< " ERROR : Could not parse !"<<str<<endl;
+void yyerror(const char *s) {
+	cout << "parse error!  Message: " << s << endl;
+	// might as well halt now:
+	//exit(-1);
 }
 
-int yywrap ( void ) { return 0; }
-
-int main() {
+int main(int,char**) {
   	yyparse();
-	
-/*	FILE* ass;
-	ass = fopen("/As.s","w+");
-	fcout<<ass,head());
-	while(!isEmpty(head_initQ)){
-		 fcout<<ass,head_initQ->ass);
-		 deQ(&head_initQ,&tail_initQ);
-	}
-	while(!isEmpty(head_codeQ)){
-		 fcout<<ass,head_codeQ->ass);
-		 deQ(&head_codeQ,&tail_codeQ);
-	}
-	fcout<<ass,foot());
-	fclose(ass); */
-  	
   	return 0;
 }
