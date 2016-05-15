@@ -90,12 +90,19 @@ if 		:
 	 											}
 		;
 conloop	:
-			NUM TO NUM							{
+			var NUM TO NUM						{
+													bodycode.push(constn($2));
+													bodycode.push(constn($4));
 
+													NodeAst* nodeVar = nodes.top();
+													nodes.pop();
+
+													bodycode.push(asloophead(nodeVar->getAddress(),lcount));
 												}
 		;
 loop 	: 
 			LOOP conloop '{' END stas '}' 		{
+													bodycode.push(loopend(lcount));
 														
 												}	
 		;

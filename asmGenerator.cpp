@@ -150,12 +150,26 @@ string asif(int icount){
 	return asscode.str();	
 }
 
-string asloophead(int lcount){
+string asloophead(int var,int lcount){
 	stringstream asscode;
+	asscode << "\tpop %rcx"<< endl;
+	asscode << "\tpop %rax"<< endl;
 	asscode << "LOOP"<<lcount<<" :"<<endl;
+
+	asscode << "\tcmp %rax,%rcx"<< endl;
+	asscode << "\tjg LE"<<lcount<<endl;
+
+	asscode <<"\tdec %rax"<<endl;
+	asscode << "\tmovq %rax,-"<<var<<"(%rbp)"<<endl;
+
 	return asscode.str();	
 }
-
+string loopend(int lcount){
+	stringstream asscode;
+	asscode <<"\tjmp LOOP"<<lCount<<" "<<endl;
+	asscode << "LE"<<lcount<<" :"<<endl;
+	return asscode.str();
+}
 string condition(int operandleft,int operandright,int icount){
 	stringstream asscode;
 	if(operandright == -1){
