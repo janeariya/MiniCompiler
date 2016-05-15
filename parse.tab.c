@@ -1360,7 +1360,7 @@ yyreduce:
     {	
 													NodeAst* var = new NodeAst((yyvsp[0].chval),-1,'v',NULL,NULL);
 													if(isReginit[(yyvsp[0].chval)] == 0){
-														initcode.push(init_var((yyvsp[0].chval)));
+														initcode.push(init_var(var->getAddress()));
 														isReginit[(yyvsp[0].chval)] = 1;
 													}
 													nodes.push(var);
@@ -1486,7 +1486,7 @@ yyreduce:
     {	
 													NodeAst* var = new NodeAst((yyvsp[0].chval),-1,'v',NULL,NULL);
 													if(isReginit[(yyvsp[0].chval)] == 0){
-														initcode.push(init_var((yyvsp[0].chval)));
+														initcode.push(init_var(var->getAddress()));
 														isReginit[(yyvsp[0].chval)] = 1;
 													}
 													nodes.push(var);

@@ -104,7 +104,7 @@ exp		:
 		| 	ID   								{	
 													NodeAst* var = new NodeAst($1,-1,'v',NULL,NULL);
 													if(isReginit[$1] == 0){
-														initcode.push(init_var($1));
+														initcode.push(init_var(var->getAddress()));
 														isReginit[$1] = 1;
 													}
 													nodes.push(var);
@@ -187,7 +187,7 @@ var 	:
 			ID 									{	
 													NodeAst* var = new NodeAst($1,-1,'v',NULL,NULL);
 													if(isReginit[$1] == 0){
-														initcode.push(init_var($1));
+														initcode.push(init_var(var->getAddress()));
 														isReginit[$1] = 1;
 													}
 													nodes.push(var);

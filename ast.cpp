@@ -20,7 +20,7 @@ public:
 			this->address = -1;
 		}
 		else{
-			this->address = (var_name+1)*8;
+			this->address = (var_name)*8;
 		}
 	}
 	int getVal_name(){

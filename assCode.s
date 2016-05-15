@@ -5,7 +5,7 @@ main:
 	sub $208,%rsp
 
 	xor %rax, %rax
-	movq %rax,-0(%rbp)
+	movq %rax,-16(%rbp)
 
 	movq $25,%rax
 	push %rax
@@ -20,10 +20,10 @@ main:
 	push %rdx
 
 	pop %rax
-	movq %rax,-8(%rbp)
+	movq %rax,-16(%rbp)
 
 	leaq .show, %rdi
-	movq -8(%rbp),%rsi
+	movq -16(%rbp),%rsi
 	xor %rax, %rax
 	call printf
 
