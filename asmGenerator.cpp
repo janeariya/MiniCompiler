@@ -166,7 +166,7 @@ string asloophead(int var,int lcount){
 }
 string loopend(int lcount){
 	stringstream asscode;
-	asscode <<"\tjmp LOOP"<<lCount<<" "<<endl;
+	asscode <<"\tjmp LOOP"<<lcount<<" "<<endl;
 	asscode << "LE"<<lcount<<" :"<<endl;
 	return asscode.str();
 }
