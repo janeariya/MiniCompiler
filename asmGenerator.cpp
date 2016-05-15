@@ -7,10 +7,15 @@ using namespace std;
 string init_var(int taroffset) {
 	stringstream asscode;
 	asscode << "\txor %rax, %rax" << endl; //clear reg
-	if(taroffset)
-		asscode << "\tmovq %rax,-"<<taroffset<<"(%rbp)"<<endl; //alloc var count offset from base pointer
+	asscode << "\tmovq %rax,-"<<taroffset<<"(%rbp)"<<endl; //alloc var count offset from base pointer
 	return asscode.str();
 }
+string init_string(char* ch,int i) {
+	stringstream asscode;
+	asscode << "\t.s"<<i<<": .string "<<ch<< endl;
+	return asscode.str();	
+}
+
 
 string assign(int opOffset,int taroffset){
 	stringstream asscode;
@@ -188,6 +193,19 @@ string show(int opOffset){
 
 	return asscode.str();
 }
+string showString(int i){
+	stringstream asscode;
+	// put string to print
+	asscode << "\tleaq .showstring, %rdi"<< endl;
+	// put format
+	asscode << "\tleaq .s"<<i<<", %rsi"<< endl;
+	// set rax = 0
+	asscode << "\txor %rax, %rax"<< endl;
+	// call printf
+	asscode << "\tcall printf"<< endl;
+
+	return asscode.str();
+}
 string head(){
 	stringstream asscode;
 	asscode << ".global main"<< endl;
@@ -201,5 +219,6 @@ string foot(){
 	asscode << "\tadd $216, %rsp"<< endl;
 	asscode << "\tret"<< endl;
 	asscode << ".data\n\t.show: .string \" %d \\n\" "<< endl;
+	asscode << "\t.showstring: .string \" %s \\n\" "<< endl;
 	return asscode.str();
 }

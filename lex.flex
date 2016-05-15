@@ -48,8 +48,12 @@ $[a-z]													{
 "#"														{	comment();		}
 "{"														{	return '{';		}
 "}"														{	return '}';		}
+\"[a-zA-z_0-9]+\"									{	
+															yylval.strval = yytext;
+															return STRING;	
+														}
 [ \t ' ' ]+ ;
-. 														{	return STRING;	}
+.
 %%
 
 void comment(void){
@@ -58,7 +62,7 @@ void comment(void){
  loop:
  	while ((c = yyinput()) != '\\' && c != 0);
  
- 	if ((c1 = yyinput()) != 'n' && c != 0)
+ 	if ((c1 = yyinput()) != 'n' && c1 != 0)
  	{
  		goto loop;
  	}

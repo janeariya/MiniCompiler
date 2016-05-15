@@ -18,8 +18,10 @@ void yyerror(const char *);
 int isReginit[27] = {};
 int lcount = 0;
 int icount = 0;
+int scount = 0;
 queue<string> bodycode;
 queue<string> initcode;
+queue<string> initstring;
 stack<NodeAst*> nodes;
 
 %}
@@ -27,7 +29,7 @@ stack<NodeAst*> nodes;
 %define parse.error verbose
 %union{
 	int dval;
-	char *strval;
+	char* strval;
 	int chval;
 }
 
@@ -46,13 +48,13 @@ stack<NodeAst*> nodes;
 %%
 result 	:
 		|	result stas 					{
-												//cout<<"hi"<<endl;
+
 											}							
 		| 	result if END 					{
-												//cout<<"hi2"<<endl;
+
 											}					
 		| 	result loop END 				{
-												//cout<<"hi3"<<endl;
+
 											}									
 		;
 
@@ -66,8 +68,8 @@ sta 	:
 													nodes.pop();	
 													bodycode.push(show(nodeExp->getAddress()));
 												}
-		| 	SHOW STRING 						{
-															
+		| 	SHOW str 							{
+													bodycode.push(showString(scount++));
 												}
 		| 	var ASSIGN exp						{
 													NodeAst* nodeExp = nodes.top();
@@ -77,7 +79,11 @@ sta 	:
 													bodycode.push(assign(nodeExp->getAddress(),nodeVar->getAddress()));
 												}
 		;
-
+str     :
+			STRING								{
+													initstring.push(init_string($1,scount));
+												}
+		;
 if 		:
 	 		IF '(' cond ')' '{' END stas '}'	{ 
 	 												bodycode.push(asif(icount++));
@@ -89,14 +95,13 @@ conloop	:
 												}
 		;
 loop 	: 
-			LOOP conloop '{' stas '}' 			{
-													
+			LOOP conloop '{' END stas '}' 		{
+														
 												}	
 		;
 
 exp		: 
 			NUM									{ 	
-													//cout<<$$<<endl;
 													NodeAst* nconst = new NodeAst(-1,$1,'c',NULL,NULL);
 													bodycode.push(constn($1));
 													nodes.push(nconst);
@@ -185,7 +190,6 @@ cond 	:
 
 var 	: 
 			ID 									{	
-													//cout<<$1<<endl;
 													NodeAst* var = new NodeAst($1,-1,'v',NULL,NULL);
 													if(isReginit[$1] == 0){
 														initcode.push(init_var(var->getAddress()));
@@ -224,6 +228,10 @@ int main(void) {
   		bodycode.pop();
   	}
   	file<<foot()<<endl;
+   	while(!initstring.empty()){
+  		file<<initstring.front()<<endl;
+  		initstring.pop();
+  	}
   	file.close();
   	return 0;
 }
