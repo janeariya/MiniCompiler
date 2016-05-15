@@ -7,7 +7,7 @@ using namespace std;
 string init_var(int taroffset) {
 	stringstream asscode;
 	asscode << "\txor %rax, %rax" << endl; //clear reg
-	asscode << "\tmov %rax,-"<<taroffset<<"(%rbp)"<<endl; //alloc var count offset from base pointer
+	asscode << "\tmovq %rax,-"<<taroffset<<"(%rbp)"<<endl; //alloc var count offset from base pointer
 	return asscode.str();
 }
 
@@ -16,18 +16,18 @@ string assign(int opOffset,int taroffset){
 	//if op == '' means $a = add, sub, mul, div, mod, const
 	if(opOffset == -1){
 		asscode << "\tpop %rax"<< endl;
-		asscode << "\tmov %rax,-"<<taroffset<<"(%rbp)"<<endl;
+		asscode << "\tmovq %rax,-"<<taroffset<<"(%rbp)"<<endl;
 	}
 	//if go else means $a = var (op is var address )
 	else{
-		asscode << "\tmov -"<<opOffset<<"(%rbp),-"<<taroffset<<"(%rbp)"<<endl;
+		asscode << "\tmovq -"<<opOffset<<"(%rbp),-"<<taroffset<<"(%rbp)"<<endl;
 	}
 	return asscode.str();
 }
 
 string constn(int val){
 	stringstream asscode;
-	asscode <<  "\tmov"<< val <<",%rax"<<endl; //copy cont to rax
+	asscode <<  "\tmovq $"<< val <<",%rax"<<endl; //copy cont to rax
 	asscode <<  "\tpush %rax"<< endl; //push rax into stack
 	return asscode.str();
 }
@@ -39,13 +39,13 @@ string add(int operandleft,int operandright){
 		asscode << "\tpop %rbx"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<< operandright <<"(%rbp), %rbx" << endl;
+		asscode << "\tmovq -"<< operandright <<"(%rbp), %rbx" << endl;
 	}
 	if(operandleft == -1){
 		asscode << "\tpop %rax"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<<operandleft<<"(%rbp), %rax"<<endl;
+		asscode << "\tmovq -"<<operandleft<<"(%rbp), %rax"<<endl;
 	}
 
 	asscode << "\tadd %rbx, %rax"<< endl; // %rax = %rax + %rbx
@@ -60,13 +60,13 @@ string sub(int operandleft,int operandright){
 		asscode << "\tpop %rbx"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<< operandright <<"(%rbp), %rbx" << endl;
+		asscode << "\tmovq -"<< operandright <<"(%rbp), %rbx" << endl;
 	}
 	if(operandleft == -1){
 		asscode << "\tpop %rax"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<<operandleft<<"(%rbp), %rax"<<endl;
+		asscode << "\tmovq -"<<operandleft<<"(%rbp), %rax"<<endl;
 	}
 
 	asscode << "\tsub %rbx, %rax"<< endl; // %rax = %rax - %rbx
@@ -81,13 +81,13 @@ string mul(int operandleft,int operandright){
 		asscode << "\tpop %rbx"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<< operandright <<"(%rbp), %rbx" << endl;
+		asscode << "\tmovq -"<< operandright <<"(%rbp), %rbx" << endl;
 	}
 	if(operandleft == -1){
 		asscode << "\tpop %rax"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<<operandleft<<"(%rbp), %rax"<<endl;
+		asscode << "\tmovq -"<<operandleft<<"(%rbp), %rax"<<endl;
 	}
 
 	asscode << "\timul %rbx"<< endl; //%rax = %rax x %rbx ; imul is signed
@@ -102,13 +102,13 @@ string divide(int operandleft,int operandright){
 		asscode << "\tpop %rbx"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<< operandright <<"(%rbp), %rbx" << endl;
+		asscode << "\tmovq -"<< operandright <<"(%rbp), %rbx" << endl;
 	}
 	if(operandleft == -1){
 		asscode << "\tpop %rax"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<<operandleft<<"(%rbp), %rax"<<endl;
+		asscode << "\tmovq -"<<operandleft<<"(%rbp), %rax"<<endl;
 	}
 
 	asscode << "\tidiv %rbx"<< endl; //%rax = %rax / %rbx ; idiv is signed
@@ -123,13 +123,13 @@ string mod(int operandleft,int operandright){
 		asscode << "\tpop %rbx"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<< operandright <<"(%rbp), %rbx" << endl;
+		asscode << "\tmovq -"<< operandright <<"(%rbp), %rbx" << endl;
 	}
 	if(operandleft == -1){
 		asscode << "\tpop %rax"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<<operandleft<<"(%rbp), %rax"<<endl;
+		asscode << "\tmovq -"<<operandleft<<"(%rbp), %rax"<<endl;
 	}
 
 	asscode << "\txor %rdx, %rdx"<< endl;
@@ -156,13 +156,13 @@ string condition(int operandleft,int operandright,int icount){
 		asscode << "\tpop %rbx"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<< operandright <<"(%rbp), %rbx" << endl;
+		asscode << "\tmovq -"<< operandright <<"(%rbp), %rbx" << endl;
 	}
 	if(operandleft == -1){
 		asscode << "\tpop %rax"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<<operandleft<<"(%rbp), %rax"<<endl;
+		asscode << "\tmovq -"<<operandleft<<"(%rbp), %rax"<<endl;
 	}
 	asscode << "\tcmp %rax,%rbx"<< endl;
 	asscode << "\tjnz IF"<<icount<<endl;
@@ -171,44 +171,27 @@ string condition(int operandleft,int operandright,int icount){
 
 string show(int opOffset){
 	stringstream asscode;
-	//save val to stack before call function
-	asscode << "\tpush %rax"<< endl; 
-	asscode << "\tpush %rbx"<< endl;
-	asscode << "\tpush %rcx"<< endl;
-	asscode << "\tpush %rdx"<< endl;
-	asscode << "\tpush %rdi"<< endl;
-	asscode << "\tpush %rsi"<< endl;
-	asscode << "\tpush %rbp"<< endl;
 	// put string to print
-	asscode << "\tmov $show, %rdi"<< endl;
+	asscode << "\tleaq .show, %rdi"<< endl;
 	// put format
 	if(opOffset == -1){
 		asscode << "\tpop %rsi"<< endl;
 	}
 	else{
-		asscode << "\tmov -"<<opOffset<<"(%rbp),%rsi"<<endl;
+		asscode << "\tmovq -"<<opOffset<<"(%rbp),%rsi"<<endl;
 	}
 	// set rax = 0
 	asscode << "\txor %rax, %rax"<< endl;
 	// call printf
 	asscode << "\tcall printf"<< endl;
 
-	// return val to reg back to main
-	asscode << "\tpop %rax"<< endl;
-	asscode << "\tpop %rbx"<< endl;
-	asscode << "\tpop %rcx"<< endl;
-	asscode << "\tpop %rdx"<< endl;
-	asscode << "\tpop %rdi"<< endl;
-	asscode << "\tpop %rsi"<< endl;
-	asscode << "\tpop %rbp"<< endl;	
-
 	return asscode.str();
 }
 string head(){
 	stringstream asscode;
-	asscode << "\t.global main"<< endl;
-	asscode << "\t.text"<< endl;
-	asscode << "main:\tmov %rsp,%rbp"<< endl;
+	asscode << ".global main"<< endl;
+	asscode << ".text"<< endl;
+	asscode << "main:\n\tmovq %rsp,%rbp"<< endl;
 	asscode << "\tsub $208,%rsp"<< endl;
 	return asscode.str();
 }
@@ -216,6 +199,6 @@ string foot(){
 	stringstream asscode;
 	asscode << "\tadd $208, %rsp"<< endl;
 	asscode << "\tret"<< endl;
-	asscode << "show:\t,asciz \" %d \\n\" "<< endl;
+	asscode << ".data\n\t.show: .string \" %d \\n\" "<< endl;
 	return asscode.str();
 }

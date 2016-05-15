@@ -1,6 +1,7 @@
 %{
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 #include <queue>
 #include <stack>
 #include <string>
@@ -44,9 +45,15 @@ stack<NodeAst*> nodes;
 
 %%
 result 	:
-		|	result stas {cout<<"hi"<<endl;}							
-		| 	result if END {cout<<"hi2"<<endl;}					
-		| 	result loop END {cout<<"hi3"<<endl;}									
+		|	result stas 					{
+												//cout<<"hi"<<endl;
+											}							
+		| 	result if END 					{
+												//cout<<"hi2"<<endl;
+											}					
+		| 	result loop END 				{
+												//cout<<"hi3"<<endl;
+											}									
 		;
 
 stas 	: 
@@ -89,7 +96,7 @@ loop 	:
 
 exp		: 
 			NUM									{ 	
-													cout<<$$<<endl;
+													//cout<<$$<<endl;
 													NodeAst* nconst = new NodeAst(-1,$1,'c',NULL,NULL);
 													bodycode.push(constn($1));
 													nodes.push(nconst);
@@ -195,5 +202,32 @@ void yyerror(const char *s) {
 }
 int yywrap ( void ) { }
 int main(void) {
-  	yyparse();
+  	FILE *myfile = fopen("a.txt", "r");
+  	// make sure it is valid:
+  	if (!myfile) {
+    	cout << "I can't open a.snazzle.file!" << endl;
+    	return -1;
+  	}
+  	// set flex to read from it instead of defaulting to STDIN:
+  	yyin = myfile;
+  
+  	// parse through the input until there is no more:
+  	do {
+    	yyparse();
+  	} while (!feof(yyin));
+  	//while(yyparse());
+  	ofstream file;
+  	file.open("assCode.s");
+  	file<<head()<<endl;
+  	while(!initcode.empty()){
+  		file<<initcode.front()<<endl;
+  		initcode.pop();
+  	}
+  	while(!bodycode.empty()){
+  		file<<bodycode.front()<<endl;
+  		bodycode.pop();
+  	}
+  	file<<foot()<<endl;
+  	file.close();
+  	return 0;
 }
