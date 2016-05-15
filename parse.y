@@ -79,8 +79,8 @@ sta 	:
 		;
 
 if 		:
-	 		IF '(' cond ')' '{' stas '}'		{ 
-	 												bodycode.push(asif(icount));
+	 		IF '(' cond ')' '{' END stas '}'	{ 
+	 												bodycode.push(asif(icount++));
 	 											}
 		;
 conloop	:
@@ -179,12 +179,13 @@ cond 	:
 													nodes.pop();
 													NodeAst* left = nodes.top();
 													nodes.pop();
-													bodycode.push(condition(left->getAddress(),right->getAddress(),icount++));
+													bodycode.push(condition(left->getAddress(),right->getAddress(),icount));
 												}
 		;
 
 var 	: 
 			ID 									{	
+													//cout<<$1<<endl;
 													NodeAst* var = new NodeAst($1,-1,'v',NULL,NULL);
 													if(isReginit[$1] == 0){
 														initcode.push(init_var(var->getAddress()));
@@ -197,25 +198,20 @@ var 	:
 
 void yyerror(const char *s) {
 	cout << "parse error!  Message: " << s << endl;
-	// might as well halt now:
 	exit(-1);
 }
 int yywrap ( void ) { }
 int main(void) {
   	FILE *myfile = fopen("a.txt", "r");
-  	// make sure it is valid:
   	if (!myfile) {
-    	cout << "I can't open a.snazzle.file!" << endl;
+    	cout << "I can't open file" << endl;
     	return -1;
   	}
-  	// set flex to read from it instead of defaulting to STDIN:
   	yyin = myfile;
-  
-  	// parse through the input until there is no more:
-  	do {
+    do {
     	yyparse();
   	} while (!feof(yyin));
-  	//while(yyparse());
+
   	ofstream file;
   	file.open("assCode.s");
   	file<<head()<<endl;

@@ -7,7 +7,8 @@ using namespace std;
 string init_var(int taroffset) {
 	stringstream asscode;
 	asscode << "\txor %rax, %rax" << endl; //clear reg
-	asscode << "\tmovq %rax,-"<<taroffset<<"(%rbp)"<<endl; //alloc var count offset from base pointer
+	if(taroffset)
+		asscode << "\tmovq %rax,-"<<taroffset<<"(%rbp)"<<endl; //alloc var count offset from base pointer
 	return asscode.str();
 }
 
@@ -192,12 +193,12 @@ string head(){
 	asscode << ".global main"<< endl;
 	asscode << ".text"<< endl;
 	asscode << "main:\n\tmovq %rsp,%rbp"<< endl;
-	asscode << "\tsub $208,%rsp"<< endl;
+	asscode << "\tsub $216,%rsp"<< endl;
 	return asscode.str();
 }
 string foot(){
 	stringstream asscode;
-	asscode << "\tadd $208, %rsp"<< endl;
+	asscode << "\tadd $216, %rsp"<< endl;
 	asscode << "\tret"<< endl;
 	asscode << ".data\n\t.show: .string \" %d \\n\" "<< endl;
 	return asscode.str();

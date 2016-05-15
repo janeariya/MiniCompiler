@@ -802,7 +802,7 @@ case 5:
 YY_RULE_SETUP
 #line 17 "lex.flex"
 {	
-															yylval.chval = (int)yytext[1]-'a';
+															yylval.chval = (int)yytext[1]-'a'+1;
 															return ID;
 														}
 	YY_BREAK

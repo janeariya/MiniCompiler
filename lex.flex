@@ -15,7 +15,7 @@ if														{	return IF;		}
 Loop													{	return LOOP;	}
 to														{	return TO; 		}
 $[a-z]													{	
-															yylval.chval = (int)yytext[1]-'a';
+															yylval.chval = (int)yytext[1]-'a'+1;
 															return ID;
 														}
 [0-9]+													{ 	
