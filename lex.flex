@@ -40,7 +40,8 @@ $[a-z]													{
 "*"														{ 	return '*'; }
 "/"														{ 	return '/'; }
 "=="													{	return EQUAL;	}
-"="														{	return ASSIGN;	}	
+"="														{	return ASSIGN;	}
+":"														{	return ':'; }
 "\n"													{	return END; 	}
 "("														{	return '('; 	}
 ")"														{	return	')'; 	}
@@ -55,6 +56,8 @@ $[a-z]													{
 [ \t ' ' ]+ ;
 .
 %%
+
+int yywrap ( void ) { }
 
 void comment(void){
  	char c, c1;

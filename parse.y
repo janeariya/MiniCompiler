@@ -26,7 +26,7 @@ stack<NodeAst*> nodes;
 
 %}
 
-%define parse.error verbose
+//%define parse.error verbose
 %union{
 	int dval;
 	char* strval;
@@ -90,9 +90,10 @@ if 		:
 	 											}
 		;
 conloop	:
-			var NUM TO NUM						{
-													bodycode.push(constn($2));
-													bodycode.push(constn($4));
+			var ':' NUM TO NUM					{
+													printf("conloop %d %d",$3,$5);
+													bodycode.push(constn($3));
+													bodycode.push(constn($5));
 
 													NodeAst* nodeVar = nodes.top();
 													nodes.pop();
@@ -211,7 +212,7 @@ void yyerror(const char *s) {
 	cout << "parse error!  Message: " << s << endl;
 	exit(-1);
 }
-int yywrap ( void ) { }
+
 int main(void) {
   	FILE *myfile = fopen("a.txt", "r");
   	if (!myfile) {
